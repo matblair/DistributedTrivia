@@ -1,7 +1,10 @@
 package edu.distributedtrivia;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -11,12 +14,27 @@ public class ConnectTo extends ActionBarActivity {
 
     EditText edtIP;
 
+    MulticastSocketClient client;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_to);
 
         edtIP = (EditText) this.findViewById(R.id.edtIP);
+
+        WifiManager wim = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+        if (wim != null) {
+            WifiManager.MulticastLock mcLock = wim.createMulticastLock("msg");
+            mcLock.acquire();
+
+            try {
+                client = new MulticastSocketClient();
+                client.start();
+            } catch (Exception e) {
+                Log.d("Error", e.getStackTrace().toString());
+            }
+        }
 
 
     }

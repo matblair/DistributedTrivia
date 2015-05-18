@@ -1,83 +1,97 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+        android:scrollbars="vertical"
     tools:context="edu.distributedtrivia.Host">
 
     <TextView
+        android:id="@+id/txtTitle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Create Game"
-        android:id="@+id/txtTitle"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:textColor="#ffffffff"
         android:background="#D53115"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Create Game"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffffff"
         android:textSize="30dp"
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/txtIP"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtIP"
         android:layout_below="@+id/txtTitle"
         android:layout_centerHorizontal="true"
-        android:gravity="center_vertical|center_horizontal"
-        android:background="#E65419"
         android:layout_marginTop="2dp"
+        android:background="#E65419"
+        android:gravity="center_vertical|center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff"
         android:textSize="15dp"
         />
 
     <TextView
+        android:id="@+id/txtContestants"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Contestants"
-        android:id="@+id/txtContestants"
-        android:gravity="center_vertical|center_horizontal"
-        android:background="#F18120"
         android:layout_below="@+id/txtIP"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
+        android:background="#F18120"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Contestants"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff"
         android:textSize="20dp"
         android:textStyle="bold" />
 
     <ListView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
         android:id="@+id/lstContestants"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_above="@+id/txtWaiting"
         android:layout_below="@+id/txtContestants"
         android:layout_centerHorizontal="true"
-        android:background="#FFAD58"
         android:layout_marginTop="2dp"
-        android:layout_above="@+id/txtWaiting" />
+        android:background="#FFAD58" />
 
-    <TextView
+        <Button
+            android:id="@+id/btnStart"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Questions"
-        android:id="@+id/txtQuestions"
-        android:gravity="center_vertical|center_horizontal"
-        android:background="#F18120"
-        android:layout_marginTop="2dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
         android:layout_below="@+id/lstContestants"
-        android:layout_centerHorizontal="true" />
+            android:layout_marginTop="2dp"
+            android:background="#C9E5F8"
+            android:text="Start"
+            android:textColor="#FFFFFF" />
 
-    <Spinner
+        <Button
+            android:id="@+id/btnStartStupid"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/spinner"
-        android:layout_below="@+id/txtQuestions"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/btnStart"
+            android:layout_marginTop="2dp"
+            android:background="#9AD2FA"
+            android:text="Start Stupid"
+            android:textColor="#ffffff" />
 
 
 </RelativeLayout>
+
+</ScrollView>

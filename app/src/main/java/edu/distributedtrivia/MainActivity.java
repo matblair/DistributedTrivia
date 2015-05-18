@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -32,10 +31,23 @@ public class MainActivity extends ActionBarActivity {
                 Intent intent = new Intent(MainActivity.this, ConnectTo.class);
                 startActivity(intent);
 
-                Toast.makeText(getApplicationContext(), "Join", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "Join", Toast.LENGTH_SHORT).show();
 
             }
         });
+
+        btnHost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(MainActivity.this, Host.class);
+                startActivity(intent);
+
+//                Toast.makeText(getApplicationContext(), "Host", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
 
 
 
