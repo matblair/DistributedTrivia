@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">distributed trivia</string>
+    <string name="app_name">Trivia</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_connect_to">ConnectTo</string>
+    <string name="title_activity_host">Host</string>
 </resources>
