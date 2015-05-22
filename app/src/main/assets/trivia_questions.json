@@ -1,0 +1,213 @@
+{
+	"questions": [
+		{
+			"question": "Taking place on May 2, 2015, which horse won the 2015 Kentucky Derby?", 
+			"answers": 
+				{
+					"a": "American Pharaoh",  
+					"b": "American Queen",
+					"c": "American Knight",
+					"d": "American King"
+				},
+			"answer": "a"
+		},
+		{
+			"question": "As part of a settlement involving copyright infringement lawsuits, which streaming music service closed down in May 2015?", 
+			"answers": 
+				{
+					"a": "Spotify",  
+					"b": "Napster",
+					"c": "Grooveshark",
+					"d": "Tidal"
+				},
+			"answer": "c"
+		},
+		{
+			"question": "Which party won the 2015 General Election in the UK on May 8th, 2015?", 
+			"answers": 
+				{
+					"a": "Liberal Democrats",  
+					"b": "Conservative",
+					"c": "UKIP",
+					"d": "Labour"
+				},
+			"answer": "b"
+		},
+		{
+			"question": "EGS-zs8-1 was discovered in May of 2015. What is it?", 
+			"answers": 
+				{
+					"a": "Moon",  
+					"b": "Planet",
+					"c": "Rocket",
+					"d": "Galaxy"
+				},
+			"answer": "d"
+		},
+		{
+			"question": "John Kerry became the first leading figure in US politics to visit which nation since 1993?", 
+			"answers": 
+				{
+					"a": "Nigeria",  
+					"b": "Iran",
+					"c": "Somalia",
+					"d": "Israel"
+				},
+			"answer": "c"
+		},
+		{
+			"question": "Lindsey Vonn announced her split from which major sports star in May of 2015?", 
+			"answers": 
+				{
+					"a": "Usain Bolt",  
+					"b": "Brett Favre",
+					"c": "Michael Jordan",
+					"d": "Tiger Woods"
+				},
+			"answer": "d"
+		},
+		{
+			"question": "May 2015 marked what anniversary since the sinking of the British ocean liner RMSLusitania?", 
+			"answers": 
+				{
+					"a": "10",  
+					"b": "100",
+					"c": "50",
+					"d": "150"
+				},
+			"answer": "b"
+		},
+		{
+			"question": "South Korea signed a free trade agreement with which nation in May of 2015?", 
+			"answers": 
+				{
+					"a": "Vietnam",  
+					"b": "England",
+					"c": "Israel",
+					"d": "Japan"
+				},
+			"answer": "a"
+		},
+		{
+			"question": "Stephen Curry was announced as the MVP in what sport for the 2014-2015 season?", 
+			"answers": 
+				{
+					"a": "NFL",  
+					"b": "NBA",
+					"c": "MLS",
+					"d": "MLB"
+				},
+			"answer": "b"
+		},
+		{
+			"question": "The last prescription pill bottle belonging to this celebrity before his death was auctioned for $10,000 in May of 2015.", 
+			"answers": 
+				{
+					"a": "Elvis",  
+					"b": "John Lennon",
+					"c": "George Harrison",
+					"d": "Michael Jackson"
+				},
+			"answer": "a"
+		},
+		{
+			"question": "What was the first name given to the royal baby born in May of 2015?", 
+			"answers": 
+				{
+					"a": "Alice",  
+					"b": "Mary",
+					"c": "Charlotte",
+					"d": "Diana"
+				},
+			"answer": "c"
+		},
+		{
+			"question": "Which day in May is known as Star Wars Day?", 
+			"answers": 
+				{
+					"a": "May 7th",  
+					"b": "May 1st",
+					"c": "May 11th",
+					"d": "May 4th"
+				},
+			"answer": "d"
+		},
+		{
+			"question": "Which nation banned unmarried couples from riding bikes together in May of 2015?", 
+			"answers": 
+				{
+					"a": "North Korea",  
+					"b": "Nigeria",
+					"c": "Indonesia",
+					"d": "Turkey"
+				},
+			"answer": "c"
+		},
+		{
+			"question": "Irish singer-songwriter and U2 front man Bono celebrated what birthday on May 10th of 2015?", 
+			"answers": 
+				{
+					"a": "77",  
+					"b": "55",
+					"c": "44",
+					"d": "66"
+				},
+			"answer": "b"
+		},
+		{
+			"question": "A gun attack took place at an awards ceremony for cartoons of Mohammed in which US State in May of 2015?", 
+			"answers": 
+				{
+					"a": "Texas",  
+					"b": "New York",
+					"c": "Indiana",
+					"d": "Washington"
+				},
+			"answer": "a"
+		},
+		{
+			"question": "Alex Dowsett broke the one-hour record in which sport in 2015?", 
+			"answers": 
+				{
+					"a": "Boxing",  
+					"b": "Swimming",
+					"c": "Cycling",
+					"d": "Diving"
+				},
+			"answer": "c"
+		},
+		{
+			"question": "A UN world happiness study declared which nation was the happiest place to live?", 
+			"answers": 
+				{
+					"a": "England",  
+					"b": "Uruguay",
+					"c": "France",
+					"d": "Switzerland"
+				},
+			"answer": "d"
+		},
+		{
+			"question": "The i20 car is the latest model from which car company?", 
+			"answers": 
+				{
+					"a": "BMW",  
+					"b": "Audi",
+					"c": "Hyundai",
+					"d": "Volvo"
+				},
+			"answer": "c"
+		},
+		{
+			"question": "Who announced he is now officially a woman in 2015?", 
+			"answers": 
+				{
+					"a": "Bruce Jenner",  
+					"b": "Grayson Perry",
+					"c": "George Michael",
+					"d": "Elton John"
+				},
+			"answer": "a"
+		}
+	]
+}
