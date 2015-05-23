@@ -29,16 +29,14 @@
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/edtIP"
-        android:layout_width="match_parent"
+        android:id="@+id/edtName"
+        android:layout_width="250dp"
         android:layout_height="40dp"
         android:layout_below="@+id/txtTitle"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
         android:background="#E65419"
         android:gravity="center_vertical|center_horizontal"
-        android:hint="Enter IP Address!"
-        android:inputType="phone"
+        android:hint="Enter your name!"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff"
         android:textSize="15dp"
@@ -48,7 +46,7 @@
         android:id="@+id/txtCombatants"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@+id/edtIP"
+        android:layout_below="@+id/edtName"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
         android:background="#F18120"
@@ -80,5 +78,19 @@
         android:gravity="center_vertical|center_horizontal"
         android:text="Waiting To Start..."
         android:textAppearance="?android:attr/textAppearanceLarge" />
-</RelativeLayout>
+
+        <Button
+            android:id="@+id/btnName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/edtName"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/edtName"
+            android:layout_marginLeft="2dp"
+            android:layout_toEndOf="@+id/edtName"
+            android:layout_toRightOf="@+id/edtName"
+            android:background="#E65419"
+            android:text="Set Name" />
+    </RelativeLayout>
 </ScrollView>

@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,14 +21,18 @@ import java.net.MulticastSocket;
 
 public class ConnectTo extends ActionBarActivity {
 
-    EditText edtIP;
+    EditText edtName;
+    Button btnName;
+    Boolean flag = false;
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connect_to);
 
-        edtIP = (EditText) this.findViewById(R.id.edtIP);
+        edtName = (EditText) this.findViewById(R.id.edtName);
+        btnName = (Button) this.findViewById(R.id.btnName);
 
         WifiManager wim = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
         if (wim != null) {
@@ -36,6 +42,23 @@ public class ConnectTo extends ActionBarActivity {
             new MulticastClient().execute();
         }
 
+        btnName.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (!flag) {
+                    name = edtName.getText().toString();
+                    btnName.setText("Edit Name");
+                    flag = true;
+                    edtName.setEnabled(false);
+                } else {
+                    btnName.setText("Set Name");
+                    flag = false;
+                    edtName.setEnabled(true);
+                }
+            }
+        });
 
 
     }
@@ -109,7 +132,6 @@ public class ConnectTo extends ActionBarActivity {
             super.onProgressUpdate(values);
 
             Toast.makeText(getApplicationContext(), "Socket received msg: " + values[0], Toast.LENGTH_SHORT).show();
-            edtIP.setText(values[0]);
         }
 
         @Override
