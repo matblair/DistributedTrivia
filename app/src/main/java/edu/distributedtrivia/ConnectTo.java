@@ -1,8 +1,10 @@
 package edu.distributedtrivia;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -24,7 +26,7 @@ public class ConnectTo extends ActionBarActivity {
     EditText edtName;
     Button btnName;
     Boolean flag = false;
-    String name;
+    String name, params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,8 @@ public class ConnectTo extends ActionBarActivity {
             WifiManager.MulticastLock mcLock = wim.createMulticastLock("msg");
             mcLock.acquire();
 
-            new MulticastClient().execute();
+            startMyTask(new MulticastClient());
+
         }
 
         btnName.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +63,15 @@ public class ConnectTo extends ActionBarActivity {
             }
         });
 
+    }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+        // API 11
+    void startMyTask(AsyncTask<String, ?, ?> asyncTask) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        else
+            asyncTask.execute();
     }
 
     @Override
