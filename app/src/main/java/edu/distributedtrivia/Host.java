@@ -4,20 +4,22 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
-
-;
-
 
 
 public class Host extends ActionBarActivity {
@@ -44,12 +46,7 @@ public class Host extends ActionBarActivity {
         txtIP = (TextView) this.findViewById(R.id.txtIP);
         txtIP.setText(ip);
 
-        try {
-            MulticastSocketServer server = new MulticastSocketServer();
-            server.start();
-        } catch (Exception e) {
-
-        }
+        new MulticastServer().execute();
 
     }
 
@@ -96,4 +93,49 @@ public class Host extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-}
+
+    public class MulticastServer extends AsyncTask<String, Void, String> {
+
+
+        final static int PORT = 8888;
+        final static String INET_ADDR = "225.4.5.6";
+
+        String msg = "Hello how r u?";
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                InetAddress addr = InetAddress.getByName(INET_ADDR);
+
+                DatagramSocket serverSocket = new DatagramSocket();
+
+                byte data[] = msg.toString().getBytes();
+
+                DatagramPacket msgPacket = new DatagramPacket(data, data.length, addr, PORT);
+                serverSocket.send(msgPacket);
+
+                Log.d("OUTPUT", "Server sent packet with msg: " + msg);
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            return msg;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Toast.makeText(getApplicationContext(), "Server sent packet with msg: " + s, Toast.LENGTH_SHORT).show();
+        }
+    }//Async
+}//Host
