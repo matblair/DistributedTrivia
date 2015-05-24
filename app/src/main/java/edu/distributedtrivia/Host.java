@@ -2,6 +2,7 @@ package edu.distributedtrivia;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
@@ -12,6 +13,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,9 +30,17 @@ import java.nio.ByteOrder;
 
 public class Host extends ActionBarActivity {
 
-    TextView txtIP;
     String params;
+    int numOfRounds = Globals.DEFAULT_ROUNDS;
+    //TODO
+    String name;
 
+    TextView txtIP;
+    TextView numQuestionsField;
+    Button startGame;
+    Button startStupid;
+    Button increase;
+    Button decrease;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +60,56 @@ public class Host extends ActionBarActivity {
 
         txtIP = (TextView) this.findViewById(R.id.txtIP);
         txtIP.setText(ip);
+
+        numQuestionsField = (TextView) this.findViewById(R.id.numberOfRounds);
+        numQuestionsField.setText(Integer.toString(numOfRounds));
+
+        increase = (Button) this.findViewById(R.id.increaseQuestions);
+        increase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (numOfRounds != Globals.MAX_ROUNDS) {
+                    numOfRounds++;
+                    numQuestionsField.setText(Integer.toString(numOfRounds));
+                }
+            }
+        });
+
+        decrease = (Button) this.findViewById(R.id.decreaseQuestions);
+        decrease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (numOfRounds != Globals.MIN_ROUNDS) {
+                    numOfRounds--;
+                    numQuestionsField.setText(Integer.toString(numOfRounds));
+                }
+            }
+        });
+
+        startGame = (Button) this.findViewById(R.id.btnStart);
+        startGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Globals.gs.gameSetup(numOfRounds, true);
+                Intent i = new Intent();
+                i.setClass(Host.this, QuestionActivity.class);
+                startActivity(i);
+            }
+        });
+
+        startStupid = (Button) this.findViewById(R.id.btnStartStupid);
+        startStupid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Globals.gs.gameSetup(numOfRounds, false);
+                Intent i = new Intent();
+                i.setClass(Host.this, QuestionActivity.class);
+                startActivity(i);
+            }
+        });
+
+        Globals.gs = new GameState();
+        Globals.userPlayer = new Player(ip,name);
 
         startMyTask(new MulticastServer());
 
