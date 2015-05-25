@@ -43,4 +43,9 @@ public class Player {
             score =- Globals.INCORRECT_SCORE;
         }
     }
+
+    @Override
+    public String toString() {
+        return (position + ". " + name + " " + score);
+    }
 }
