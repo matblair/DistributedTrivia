@@ -69,38 +69,74 @@
     <ListView
         android:id="@+id/lstContestants"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_above="@+id/txtWaiting"
-        android:layout_below="@+id/txtContestants"
+        android:layout_height="250dp"
+        android:background="#FFAD58"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="2dp"
-        android:background="#FFAD58" />
+        android:layout_below="@+id/txtContestants"
+        android:choiceMode="none"
+        android:layout_above="@+id/decreaseQuestions" />
 
         <Button
             android:id="@+id/btnStart"
         android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-        android:layout_below="@+id/lstContestants"
-            android:layout_marginTop="2dp"
             android:background="#C9E5F8"
             android:text="Start"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:layout_alignRight="@+id/lstContestants"
+            android:layout_alignEnd="@+id/lstContestants"
+            android:layout_above="@+id/btnStartStupid" />
 
         <Button
             android:id="@+id/btnStartStupid"
         android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/btnStart"
-            android:layout_marginTop="2dp"
             android:background="#9AD2FA"
             android:text="Start Stupid"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/lstContestants"
+            android:layout_alignEnd="@+id/lstContestants" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:id="@+id/decreaseQuestions"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/btnStart"
+            android:layout_alignTop="@+id/numberOfRounds"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Large Text"
+            android:id="@+id/numberOfRounds"
+            android:layout_toRightOf="@+id/decreaseQuestions"
+            android:layout_toLeftOf="@+id/increaseQuestions"
+            android:layout_toStartOf="@+id/increaseQuestions"
+            android:layout_alignBottom="@+id/increaseQuestions"
+            android:layout_alignTop="@+id/increaseQuestions"
+            android:gravity="center_vertical|center_horizontal" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:id="@+id/increaseQuestions"
+            android:layout_above="@+id/btnStart"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textStyle="bold"
+            android:textSize="24dp" />
 
 
-</RelativeLayout>
+    </RelativeLayout>
 
 </ScrollView>
