@@ -12,28 +12,51 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
+import java.util.List;
 
 
 public class Host extends ActionBarActivity {
 
     TextView txtIP;
-    String params;
+    EditText edtName;
+    Button btnName;
+    ListView lstNames;
+    String params, name;
+    MyArrayAdapter adapter;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host);
+
+        edtName = (EditText) this.findViewById(R.id.edtName);
+        btnName = (Button) this.findViewById(R.id.btnName);
+        lstNames = (ListView) this.findViewById(R.id.lstContestants);
+//        txtIP = (TextView) this.findViewById(R.id.txtIP);
+        adapter = new MyArrayAdapter(this, MainActivity.userNames);
+        lstNames.setAdapter(adapter);
+
 
         // Check for WiFi connectivity
         ConnectivityManager connManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -44,23 +67,48 @@ public class Host extends ActionBarActivity {
             return;
         }
 
+        startMyTask(new MulticastClient());
+        adapter.notifyDataSetChanged();
+
         String ip = wifiIpAddress(this);
 
-        txtIP = (TextView) this.findViewById(R.id.txtIP);
-        txtIP.setText(ip);
+        btnName.setOnClickListener(new View.OnClickListener() {
 
-        startMyTask(new MulticastServer());
+            @Override
+            public void onClick(View v) {
+
+                name = edtName.getText().toString();
+                btnName.setEnabled(false);
+                edtName.setEnabled(false);
+
+                MainActivity.userNames.add(name);
+                startMyTask(new MulticastServer());
+
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+
+        lstNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String item = (String) adapter.getItem(position);
+                Toast.makeText(getApplicationContext(), item + " selected", Toast.LENGTH_LONG).show();
+            }
+        });
+
+//        startMyTask(new MulticastServer());
 
     }
 
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         // API 11
-    void startMyTask(AsyncTask<String, ?, ?> asyncTask) {
+    void startMyTask(AsyncTask<List<String>, List<String>, List<String>> asyncTask) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MainActivity.userNames);
         else
-            asyncTask.execute();
+            asyncTask.execute(MainActivity.userNames);
     }
 
     protected String wifiIpAddress(Context context) {
@@ -107,35 +155,113 @@ public class Host extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class MulticastServer extends AsyncTask<String, Void, String> {
+    public class MulticastClient extends AsyncTask<List<String>, List<String>, List<String>> {
+
+        final static String INET_ADDR = "225.4.5.6";
+        final static int PORT = 8888;
+        String msg;
+
+        @Override
+        protected List<String> doInBackground(List<String>... params) {
+
+            try {
+                InetAddress address = InetAddress.getByName(INET_ADDR);
+
+                byte[] buf = new byte[1024];
+
+                DatagramPacket msgPacket = new DatagramPacket(buf, buf.length);
+                MulticastSocket clientSocket;
+
+                clientSocket = new MulticastSocket(PORT);
+                clientSocket.joinGroup(address);
+
+                while (true) {
+                    clientSocket.receive(msgPacket);
+
+                    // read from byte array
+                    ByteArrayInputStream bais = new ByteArrayInputStream(msgPacket.getData());
+                    DataInputStream in = new DataInputStream(bais);
+                    MainActivity.userNames.clear();
+                    while (in.available() > 0) {
+
+                        String line = in.readUTF();
+                        if (!line.equalsIgnoreCase(""))
+                            MainActivity.userNames.add(line);
+                        else
+                            break;
+                    }
+//                Log.d("OUTPUT", "Socket received msg: " + lstNames.toString());
+                    publishProgress(MainActivity.userNames);
+                }
+            } catch (UnknownHostException e) {
+                Log.d("ERROR", e.toString());
+            } catch (IOException e) {
+                Log.d("ERROR", e.toString());
+            }
+
+            return MainActivity.userNames;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(List<String>... values) {
+            super.onProgressUpdate(values);
+
+            adapter.notifyDataSetChanged();
+//        Toast.makeText(getApplicationContext(), "Socket received msg: " + values[0].toString(), Toast.LENGTH_SHORT).show();
+
+//        int numberOfLevels=5;
+//        final WifiManager WifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+//        WifiInfo wifiInfo = WifiManager.getConnectionInfo();
+//        int level=WifiManager.calculateSignalLevel(wifiInfo.getRssi(), numberOfLevels);
+//
+//        Toast.makeText(getApplicationContext(), "Signal strength: " + level, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(List<String> list) {
+            super.onPostExecute(list);
+        }
+    }//Async Client
+
+
+    public class MulticastServer extends AsyncTask<List<String>, List<String>, List<String>> {
 
 
         final static int PORT = 8888;
         final static String INET_ADDR = "225.4.5.6";
 
-        String msg = "Hello how r u?";
-
 
         @Override
-        protected String doInBackground(String... params) {
+        protected List<String> doInBackground(List<String>... params) {
 
             try {
                 InetAddress addr = InetAddress.getByName(INET_ADDR);
 
                 DatagramSocket serverSocket = new DatagramSocket();
 
-                byte data[] = msg.toString().getBytes();
+                // write to byte array
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                DataOutputStream out = new DataOutputStream(baos);
+                for (String element : MainActivity.userNames) {
+                    out.writeUTF(element);
+                }
+                byte[] bytes = baos.toByteArray();
 
-                DatagramPacket msgPacket = new DatagramPacket(data, data.length, addr, PORT);
+                DatagramPacket msgPacket = new DatagramPacket(bytes, bytes.length, addr, PORT);
                 serverSocket.send(msgPacket);
 
-                Log.d("OUTPUT", "Server sent packet with msg: " + msg);
+//            Log.d("OUTPUT", "Server sent packet with msg: " + Host.lstNames.toString());
 
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
-            return msg;
+            return MainActivity.userNames;
         }
 
         @Override
@@ -145,10 +271,13 @@ public class Host extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(List<String> lstNames) {
+            super.onPostExecute(lstNames);
 
-            Toast.makeText(getApplicationContext(), "Server sent packet with msg: " + s, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(, "Server sent packet with msg: " + lstNames.toString(), Toast.LENGTH_SHORT).show();
+
+//        Host.adapter.notifyDataSetChanged();
+//        Log.d("SENT", "Server sent packet with msg: " + lstNames.toString());
         }
-    }//Async
+    }//Async Host
 }//Host
