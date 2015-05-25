@@ -65,6 +65,7 @@ public class Host extends ActionBarActivity {
         lstNames.setAdapter(adapter);
 
         numOfRounds = Globals.DEFAULT_ROUNDS;
+        Globals.gs = new GameState(this);
 
         // Check for WiFi connectivity
         ConnectivityManager connManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -90,6 +91,7 @@ public class Host extends ActionBarActivity {
                 edtName.setEnabled(false);
 
                 Globals.userNames.add(name);
+                Globals.userPlayer = new Player(name);
                 startMyTask(new MulticastServer());
 
                 adapter.notifyDataSetChanged();

@@ -4,20 +4,14 @@ package edu.distributedtrivia;
  * Created by jburd on 23/05/15.
  */
 public class Player {
-    private String ipAddress;
     private String name;
     private int score;
     private int position;
 
-    public Player(String ip, String name){
-        this.ipAddress = ip;
+    public Player(String name){
         this.name = name;
         score = 0;
         position = 1;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
     }
 
     public String getName() {

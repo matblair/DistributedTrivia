@@ -1,5 +1,6 @@
 package edu.distributedtrivia;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -18,15 +19,22 @@ public class GameState {
     private Player playerAnswered;
     private boolean correctAnswer;
 
-    public GameState() {
+    public GameState(Context context) {
         roundNum = 1;
         players = new ArrayList();
-        qB = new QuestionBank("assets/trivia_questions.json");
+        System.out.println("CREATE QB");
+        qB = new QuestionBank(context);
+        System.out.println("CREATED");
     }
 
     public void gameSetup(int numRounds, boolean paxos){
         this.numRounds = numRounds;
         this.paxos = paxos;
+        currentQuestion = qB.nextQuestion();
+
+        for(String name : Globals.userNames){
+            players.add(new Player(name));
+        }
     }
 
     public boolean isPaxos() {
@@ -37,10 +45,6 @@ public class GameState {
         this.paxos = paxos;
     }
 
-    public void addPlayer(Player player){
-        players.add(player);
-    }
-
     public void nextRound() {
         currentQuestion = qB.nextQuestion();
         roundNum++;
@@ -48,7 +52,7 @@ public class GameState {
 
     public void updatePlayer(Player playerUpdate, boolean correct){
         for (Player player : players) {
-            if(player.getIpAddress().equals(playerUpdate.getIpAddress())){
+            if(player.getName().equals(playerUpdate.getName())){
                 players.set(players.indexOf(player), playerUpdate);
                 playerAnswered = playerUpdate;
                 correctAnswer = correct;
