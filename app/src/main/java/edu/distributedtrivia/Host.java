@@ -54,7 +54,7 @@ public class Host extends ActionBarActivity {
         btnName = (Button) this.findViewById(R.id.btnName);
         lstNames = (ListView) this.findViewById(R.id.lstContestants);
 //        txtIP = (TextView) this.findViewById(R.id.txtIP);
-        adapter = new MyArrayAdapter(this, MainActivity.userNames);
+        adapter = new MyArrayAdapter(this, Globals.userNames);
         lstNames.setAdapter(adapter);
 
 
@@ -81,7 +81,7 @@ public class Host extends ActionBarActivity {
                 btnName.setEnabled(false);
                 edtName.setEnabled(false);
 
-                MainActivity.userNames.add(name);
+                Globals.userNames.add(name);
                 startMyTask(new MulticastServer());
 
                 adapter.notifyDataSetChanged();
@@ -106,9 +106,9 @@ public class Host extends ActionBarActivity {
         // API 11
     void startMyTask(AsyncTask<List<String>, List<String>, List<String>> asyncTask) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MainActivity.userNames);
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Globals.userNames);
         else
-            asyncTask.execute(MainActivity.userNames);
+            asyncTask.execute(Globals.userNames);
     }
 
     protected String wifiIpAddress(Context context) {
@@ -181,17 +181,17 @@ public class Host extends ActionBarActivity {
                     // read from byte array
                     ByteArrayInputStream bais = new ByteArrayInputStream(msgPacket.getData());
                     DataInputStream in = new DataInputStream(bais);
-                    MainActivity.userNames.clear();
+                    Globals.userNames.clear();
                     while (in.available() > 0) {
 
                         String line = in.readUTF();
                         if (!line.equalsIgnoreCase(""))
-                            MainActivity.userNames.add(line);
+                            Globals.userNames.add(line);
                         else
                             break;
                     }
 //                Log.d("OUTPUT", "Socket received msg: " + lstNames.toString());
-                    publishProgress(MainActivity.userNames);
+                    publishProgress(Globals.userNames);
                 }
             } catch (UnknownHostException e) {
                 Log.d("ERROR", e.toString());
@@ -199,7 +199,7 @@ public class Host extends ActionBarActivity {
                 Log.d("ERROR", e.toString());
             }
 
-            return MainActivity.userNames;
+            return Globals.userNames;
         }
 
         @Override
@@ -247,7 +247,7 @@ public class Host extends ActionBarActivity {
                 // write to byte array
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 DataOutputStream out = new DataOutputStream(baos);
-                for (String element : MainActivity.userNames) {
+                for (String element : Globals.userNames) {
                     out.writeUTF(element);
                 }
                 byte[] bytes = baos.toByteArray();
@@ -261,7 +261,7 @@ public class Host extends ActionBarActivity {
                 ex.printStackTrace();
             }
 
-            return MainActivity.userNames;
+            return Globals.userNames;
         }
 
         @Override

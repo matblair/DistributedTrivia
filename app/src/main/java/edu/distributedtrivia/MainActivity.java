@@ -8,13 +8,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends ActionBarActivity {
 
-    static List<String> userNames = new ArrayList<String>();
+
     Button btnJoin, btnHost, btnAbout;
 
     @Override
