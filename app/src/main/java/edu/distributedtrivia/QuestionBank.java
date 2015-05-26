@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -42,10 +43,27 @@ public class QuestionBank {
         }
     }
 
-    public Question nextQuestion() {
+    public int randomQuestionID() {
+        int max = questions.size();
         Random rand = new Random();
-        int i = rand.nextInt(questions.size());
-        return questions.remove(i);
+        return rand.nextInt(max);
+    }
+
+    public Question nextQuestion(int ID) throws UnknownQuestion{
+        Question response;
+
+        Iterator<Question> iterator = questions.iterator();
+        while(iterator.hasNext()){
+            Question q = iterator.next();
+            if(q.getID() == ID) {
+                response = q;
+                iterator.remove();
+                System.out.println("Foudn question with id " + ID);
+                return q;
+            }
+        }
+        // Requested ID doesn't exist
+        throw new UnknownQuestion("Couldn't find a question with the ID: " + ID);
     }
 
     public String loadJSONFromAsset(Context context) {

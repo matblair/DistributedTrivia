@@ -273,8 +273,8 @@ public class Host extends ActionBarActivity {
         @Override
         protected void onProgressUpdate(List<String>... values) {
             super.onProgressUpdate(values);
-
             adapter.notifyDataSetChanged();
+
 //        Toast.makeText(getApplicationContext(), "Socket received msg: " + values[0].toString(), Toast.LENGTH_SHORT).show();
 
 //        int numberOfLevels=5;

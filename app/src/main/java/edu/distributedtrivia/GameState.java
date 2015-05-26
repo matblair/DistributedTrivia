@@ -12,6 +12,11 @@ import java.util.HashMap;
 import edu.distributedtrivia.QuestionBank;
 
 public class GameState {
+    // Constants for the game setup
+    private static final int FIRST_QUESTION =0;
+
+
+    // Variables to be replicated
     private int numRounds;
     private int roundNum;
     private ArrayList<Player> players;
@@ -30,7 +35,11 @@ public class GameState {
     public void gameSetup(int numRounds, boolean paxos){
         this.numRounds = numRounds;
         this.paxos = paxos;
-        currentQuestion = qB.nextQuestion();
+        try {
+            currentQuestion = qB.nextQuestion(FIRST_QUESTION);
+        } catch(UnknownQuestion e){
+            System.out.println("We done fucked up now.");
+        }
 
         for(String name : Globals.userNames){
             players.add(new Player(name));
@@ -47,7 +56,11 @@ public class GameState {
     }
 
     public void nextRound() {
-        currentQuestion = qB.nextQuestion();
+        try {
+            currentQuestion = qB.nextQuestion(roundNum);
+        } catch(UnknownQuestion e){
+            System.out.println("We done fucked up even more!");
+        }
         roundNum++;
     }
 
