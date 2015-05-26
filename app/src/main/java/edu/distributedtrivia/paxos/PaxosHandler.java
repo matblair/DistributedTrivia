@@ -28,12 +28,11 @@ public class PaxosHandler {
     private String senderID;
 
     // The previously promised message
-    private PaxosMessage promise;
+    private PaxosMessage pending;
     private PaxosMessage future;
 
     // Save all the responses so we know when we have a quorum
-    private ArrayList<PaxosMessage> messages;
-    private ArrayList<String> promisers;
+    private ArrayList<String> quorum;
 
     // Stack to keep track of history
     private Stack<PaxosMessage> history;
@@ -45,6 +44,7 @@ public class PaxosHandler {
         round_number = 0;
         history = new Stack<PaxosMessage>();
         history.setSize(50);
+        quorum = new ArrayList<String>();
         socket = new PaxosSocket();
     }
 
@@ -147,36 +147,45 @@ public class PaxosHandler {
     // Private method to handle paxos
     private void handlePaxos(PaxosMessage.MessageType type, PaxosMessage message) {
         // If we are in a proposal state
+        System.out.println("I was called in handle Paxos ID is: " + senderID + " in state " + currentState);
         switch (type) {
             case ROUND_START:
                 handleProposal(message);
                 break;
             case WINNER:
-                // If it's the current round number then it is what we have agreed to
-                if (message.getRoundNumber() == round_number) {
-
-                } // Ignore otherwise
-                break;
             case QUESTION:
-                // If it's the current round number then it is what we have agreed to
-                if (message.getRoundNumber() == round_number) {
-
-                } // Ignore otherwise
-                break;
             case SCORE:
                 // If it's the current round number then it is what we have agreed to
                 if (message.getRoundNumber() == round_number) {
-
+                    // Accept the message
+                    pending = message;
+                    // Send a final acknowledgement
+                    acknowledgeAcceptance(message);
                 } // Ignore otherwise
                 break;
+            case ACTION:
+                // Action the existing thing
+                actionConsensus();
+                break;
+            case ACCEPT:
+                // If we are not a proposer we don't care about it
+                if(currentState==State.PROPOSER && message.getRoundNumber() == round_number){
+                    // Save the result, if we have quorom
+                    if(haveQuorum()){
+                        // Then send a message to action
+                        sendAction(message);
+                    }
+                }
             case PROMISE:
                 // If we are not a proposer we don't care about it
                 if(currentState==State.PROPOSER){
                     // Save the result
-
                     // If we have a quorum (i.e. everyone joined
                     if(haveQuorum()){
-
+                        // Send the message we were going to send
+                        socket.sendMessage(future);
+                        // Clear quorum
+                        clearQuorum();
                     }
 
                 }
@@ -188,13 +197,55 @@ public class PaxosHandler {
 
     private boolean haveQuorum(){
         // We have quorum when everyone has accepted
-        return (promisers.size() >= Globals.userNames.size());
+        return true;
+//        return (quorums.size() >= Globals.userNames.size());
+    }
+
+    private void clearQuorum(){
+        // Clear the quorum
+        quorum.clear();
+    }
+
+    // Send a message as a proposer to make all acceptors action
+    private void sendAction(PaxosMessage message){
+        // Build the response message
+        PaxosMessage response = new PaxosMessage(message.getRoundNumber(),
+                PaxosMessage.MessageType.ACTION, (long)0, null, senderID);
+        // Send that message
+        socket.sendMessage(response);
+    }
+
+    // Method to send a final acceptance
+    private void acknowledgeAcceptance(PaxosMessage message){
+        // Build the message
+        PaxosMessage response = new PaxosMessage(message.getRoundNumber(),
+                PaxosMessage.MessageType.ACCEPT,(long)0, null, senderID);
+        // Send message
+        socket.sendMessage(response);
     }
 
     // Methods to update state based on acceptance
     private void acceptQuestion(PaxosMessage message){
         // Assume if we've got here we can update
         gameState.nextRound((int)message.getValue());
+    }
+
+    private void acceptProposal(PaxosMessage message){
+        // Save the message to pending
+        pending = message;
+        // Build accept message
+        PaxosMessage response = new PaxosMessage(message.getRoundNumber(),
+                PaxosMessage.MessageType.ACTION, (long)0, null, senderID);
+        // Send that message
+        socket.sendMessage(message);
+    }
+
+    public void actionConsensus(){
+        // Find the existing action
+        if (pending != null){
+            // I should action this action!
+            System.out.println("I Should action this now! " + pending.toJson());
+        }
     }
 
     public boolean shouldAgree(int proposalNumber){
@@ -206,7 +257,6 @@ public class PaxosHandler {
         if (shouldAgree(message.getRoundNumber())) {
             // Send a promise, set our round number ot the current round number and
             // save the message as what we have promised
-            promise = message;
             round_number = message.getRoundNumber();
             sendPromise(round_number);
         } // Ignore otherwise

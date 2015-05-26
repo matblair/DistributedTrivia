@@ -17,7 +17,8 @@ public class PaxosMessage {
 
     // Our enums for message types
     public enum MessageType{
-        START, ROUND_START, WINNER, SCORE, QUESTION, ERROR, TIME, PROMISE, NEW_PLAYER
+        START, ROUND_START, WINNER, SCORE, QUESTION, ERROR, TIME, PROMISE,
+        NEW_PLAYER, ACTION, ACCEPT
     }
 
     // Variables that represent the values
@@ -80,6 +81,16 @@ public class PaxosMessage {
             case TIME:
                 type = "update_time";
                 break;
+            case PROMISE:
+                type = "promise";
+                break;
+            case ACTION:
+                type = "action";
+                break;
+            case ACCEPT:
+                type = "accept";
+                break;
+
             default:
                 break;
         }
@@ -102,12 +113,12 @@ public class PaxosMessage {
 
         if(packet != null){
             long value = (long) packet.get("value");
-            int roundNum = (int) packet.get("round_number");
+            long roundNum = (Long) packet.get("round_number");
             String type = (String) packet.get("type");
             String player = (String) packet.get("player_id");
             String sender = (String) packet.get("sender");
             MessageType mType = stringToMessageType(type);
-            return new PaxosMessage(roundNum, mType, value, player, sender);
+            return new PaxosMessage((int)roundNum, mType, (int)value, player, sender);
         }
         // Otherwise no packed
         return null;
@@ -128,6 +139,12 @@ public class PaxosMessage {
             return MessageType.TIME;
         } else if (string.equals("new_player")){
             return MessageType.NEW_PLAYER;
+        } else if (string.equals("promise")){
+            return MessageType.PROMISE;
+        } else if (string.equals("action")){
+            return MessageType.ACTION;
+        } else if (string.equals("accept")){
+            return MessageType.ACCEPT;
         } else {
             return MessageType.ERROR;
         }

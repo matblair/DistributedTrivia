@@ -27,6 +27,7 @@ public class PaxosSocket {
             address = InetAddress.getByName(INET_ADDR);
             clientSocket = new MulticastSocket(PORT);
             clientSocket.joinGroup(address);
+            System.out.println("Start server! " + clientSocket.toString());
         } catch (UnknownHostException e) {
             System.out.println("Uh Oh...");
         } catch (IOException e) {
