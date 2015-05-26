@@ -48,6 +48,8 @@ public class PaxosHandler {
         socket = new PaxosSocket();
     }
 
+    public String getSenderID() { return senderID; }
+
     // Public access to receive Paxos Handler
     public static PaxosHandler getHandler(String senderID) {
         if (globalHandler == null) {
@@ -88,6 +90,8 @@ public class PaxosHandler {
         // Increment the round number
         round_number += 1;
         // Build the message
+        System.out.println("Round number in propose new round is " + round_number);
+
         PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.ROUND_START,
                 (long)0, null, senderID);
         // Save the message that we ultimate want to create
@@ -117,6 +121,7 @@ public class PaxosHandler {
 
     public PaxosMessage proposeQuestionMsg(int question_id){
         // Build round number
+        System.out.println("Round number in propose question is " + round_number);
         PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.QUESTION,
                 (long)question_id, null, senderID);
         return message;
@@ -156,7 +161,7 @@ public class PaxosHandler {
             case QUESTION:
             case SCORE:
                 // If it's the current round number then it is what we have agreed to
-                if (message.getRoundNumber() == round_number) {
+                if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTOR)) {
                     // Accept the message
                     pending = message;
                     // Send a final acknowledgement
@@ -164,8 +169,10 @@ public class PaxosHandler {
                 } // Ignore otherwise
                 break;
             case ACTION:
-                // Action the existing thing
-                actionConsensus();
+                if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTOR)) {
+                    // Action the existing thing
+                    actionConsensus();
+                }
                 break;
             case ACCEPT:
                 // If we are not a proposer we don't care about it
@@ -183,11 +190,11 @@ public class PaxosHandler {
                     // If we have a quorum (i.e. everyone joined
                     if(haveQuorum()){
                         // Send the message we were going to send
+                        future.setRoundNumber(round_number);
                         socket.sendMessage(future);
                         // Clear quorum
                         clearQuorum();
                     }
-
                 }
             default:
                 // We don't handle so fail
@@ -245,6 +252,11 @@ public class PaxosHandler {
         if (pending != null){
             // I should action this action!
             System.out.println("I Should action this now! " + pending.toJson());
+
+
+            // Now clear it
+            pending = null;
+            currentState = State.UNDECIDED;
         }
     }
 

@@ -19,7 +19,7 @@ public class PaxosListener implements Runnable {
         while (true) {
             // Receive a message (BLOCKS ON IO)
             PaxosMessage message = socket.receiveMessage();
-            System.out.println("Receieved a message with JSON " + message.toJson());
+            System.out.println("Receieved a message with JSON " + message.toJson() + " in device " + handler.getSenderID());
             // Send to be handled by the appropriate context here
             handler.handleMessage(message);
         }

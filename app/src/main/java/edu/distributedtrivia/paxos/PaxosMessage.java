@@ -46,6 +46,11 @@ public class PaxosMessage {
         this.value = value;
     }
 
+    // Set the round number of the message before we sent it
+    public void setRoundNumber(int roundNumber){
+        this.roundNumber = roundNumber;
+    }
+
     // Returns a JSON representation of an object to be sent around using UDP and Multicast
     public String toJson(){
         // Create the json object

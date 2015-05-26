@@ -26,8 +26,9 @@ public class PaxosSocket {
         try {
             address = InetAddress.getByName(INET_ADDR);
             clientSocket = new MulticastSocket(PORT);
+            clientSocket.setLoopbackMode(true);
             clientSocket.joinGroup(address);
-            System.out.println("Start server! " + clientSocket.toString());
+            // Disable loopback server!
         } catch (UnknownHostException e) {
             System.out.println("Uh Oh...");
         } catch (IOException e) {
