@@ -154,7 +154,6 @@ public class Host extends NotifiableActivity {
                 startActivity(i);
             }
         });
-
     }
 
     private void generalisedSetup(Boolean paxos){

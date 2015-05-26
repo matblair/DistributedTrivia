@@ -15,7 +15,7 @@ public class PaxosHandler {
 
     // Methods for actions
     public enum Actions{
-        REFRESH, START_GAME, NEXT_SCREEN
+        REFRESH, START_GAME, NEXT_SCREEN, ANSWERED, BUZZED
     }
     // SINGLETON FOR THE WIN!! I Hate myself.
     private static PaxosHandler globalHandler;
@@ -168,7 +168,7 @@ public class PaxosHandler {
             case TIME:
                 if(gameState != null){
                     gameState.addPlayerResponse(message.getPlayerID(), message.getValue());
-                    updateApplication(Actions.REFRESH);
+                    updateApplication(Actions.BUZZED);
                 }
                 break;
             case NEW_PLAYER:

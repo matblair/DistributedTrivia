@@ -10,22 +10,34 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import edu.distributedtrivia.paxos.PaxosHandler;
 
-public class QuestionActivity extends ActionBarActivity {
 
-    Long startTime;
-    Long buzzTime;
-    Question roundQuestion;
+public class QuestionActivity extends NotifiableActivity {
+    // Static Variables
+    private static final int INITIAL_COUNTDOWN=30;
 
-    TextView roundNumber;
-    TextView currentPosition;
-    TextView questionText;
-    Button answerA;
-    Button answerB;
-    Button answerC;
-    Button answerD;
-    Button buzzer;
-    Button slowBuzzer;
+    // Class variables
+    private Long startTime;
+    private Long buzzTime;
+    private Question roundQuestion;
+
+    // View elements
+    private TextView roundNumber;
+    private TextView currentPosition;
+    private TextView questionText;
+    private TextView timeRemaining;
+
+    private Button answerA;
+    private Button answerB;
+    private Button answerC;
+    private Button answerD;
+    private Button buzzer;
+    private Button slowBuzzer;
+
+    // Timer for countdown to choose answer
+    private boolean showTimer;
+    private int countdownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +55,16 @@ public class QuestionActivity extends ActionBarActivity {
         questionText = (TextView) this.findViewById(R.id.questionText);
         questionText.setText(roundQuestion.getQuestion());
 
+        timeRemaining = (TextView) this.findViewById(R.id.timeRemaining);
+        timeRemaining.setVisibility(View.INVISIBLE);
+        timeRemaining.setText("");
+
         answerA = (Button) this.findViewById(R.id.answerA);
         answerA.setText("A: " + roundQuestion.getA().getAnswer());
         answerA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean result = roundQuestion.verifyAnswer(roundQuestion.getA());
-                Globals.userPlayer.updateScore(result);
-                Globals.gs.updatePlayer(Globals.userPlayer, result);
-
-                //TODO replicate state across contenstents
-
-                Intent i = new Intent();
-                i.setClass(QuestionActivity.this, ResultsActivity.class);
-                startActivity(i);
+                generalisedAnswer(roundQuestion.getA());
             }
         });
 
@@ -65,15 +73,7 @@ public class QuestionActivity extends ActionBarActivity {
         answerB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean result = roundQuestion.verifyAnswer(roundQuestion.getB());
-                Globals.userPlayer.updateScore(result);
-                Globals.gs.updatePlayer(Globals.userPlayer, result);
-
-                //TODO replicate state across contenstents
-
-                Intent i = new Intent();
-                i.setClass(QuestionActivity.this, ResultsActivity.class);
-                startActivity(i);
+                generalisedAnswer(roundQuestion.getB());
             }
         });
 
@@ -82,15 +82,7 @@ public class QuestionActivity extends ActionBarActivity {
         answerC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean result = roundQuestion.verifyAnswer(roundQuestion.getC());
-                Globals.userPlayer.updateScore(result);
-                Globals.gs.updatePlayer(Globals.userPlayer, result);
-
-                //TODO replicate state across contenstents
-
-                Intent i = new Intent();
-                i.setClass(QuestionActivity.this, ResultsActivity.class);
-                startActivity(i);
+                generalisedAnswer(roundQuestion.getC());
             }
         });
 
@@ -99,15 +91,7 @@ public class QuestionActivity extends ActionBarActivity {
         answerD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean result = roundQuestion.verifyAnswer(roundQuestion.getD());
-                Globals.userPlayer.updateScore(result);
-                Globals.gs.updatePlayer(Globals.userPlayer, result);
-
-                //TODO replicate state across contenstents
-
-                Intent i = new Intent();
-                i.setClass(QuestionActivity.this, ResultsActivity.class);
-                startActivity(i);
+                generalisedAnswer(roundQuestion.getD());
             }
         });
 
@@ -118,6 +102,7 @@ public class QuestionActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 buzzTime = System.nanoTime() - startTime;
+
                 Toast.makeText(QuestionActivity.this, Long.toString(buzzTime), Toast.LENGTH_LONG).show();
 
                 //TODO Reach consensus on timing
@@ -133,9 +118,7 @@ public class QuestionActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 buzzTime = System.nanoTime() - startTime;
-                Toast.makeText(QuestionActivity.this, Long.toString(buzzTime), Toast.LENGTH_LONG).show();
-
-                //TODO Reach consensus without Paxos
+                notifyBuzz();
 
                 enableAnswers();
                 buzzer.setEnabled(false);
@@ -171,6 +154,61 @@ public class QuestionActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void notifyBuzz(){
+        buzzTime = System.nanoTime() - startTime;
+        Toast.makeText(QuestionActivity.this, Long.toString(buzzTime), Toast.LENGTH_LONG).show();
+
+        // Get the paxos handler and get ready to send
+        PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
+        handler.sendTime(Globals.userPlayer.getName(), buzzTime);
+
+        // Update feedback
+        countdownTimer = INITIAL_COUNTDOWN;
+        startCountdownTimer();
+    }
+
+    public void startCountdownTimer(){
+        Thread t = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    timeRemaining.setVisibility(View.VISIBLE);
+                    timeRemaining.setText(countdownTimer);
+                    while(showTimer && (countdownTimer>0)){
+                        // Set the value on the text field!
+                        Thread.sleep(1000);
+                        countdownTimer -= 1;
+                        timeRemaining.setText(countdownTimer);
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }});
+        t.start();
+    }
+
+
+    // Method to update the view
+    public void notifyActivity(PaxosHandler.Actions action){
+        switch (action){
+            case ANSWERED:
+                showTimer = false;
+                break;
+            case BUZZED:
+                Toast.makeText(QuestionActivity.this, "Someone else buzzed in!", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
+
+    public void generalisedAnswer(Answer answer){
+        boolean result = roundQuestion.verifyAnswer(answer);
+        Globals.userPlayer.updateScore(result);
+        Globals.gs.updatePlayer(Globals.userPlayer, result);
+        Intent i = new Intent();
+        i.setClass(QuestionActivity.this, ResultsActivity.class);
+        startActivity(i);
     }
 
     public void enableAnswers(){
