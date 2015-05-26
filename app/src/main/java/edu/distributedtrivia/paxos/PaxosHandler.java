@@ -5,12 +5,17 @@ import java.util.Stack;
 
 import edu.distributedtrivia.GameState;
 import edu.distributedtrivia.Globals;
+import edu.distributedtrivia.NotifiableApplication;
 
 
 /**
  * Created by Mat on 26/05/15.
  */
 public class PaxosHandler {
+    // Methods for actions
+    public enum Actions{
+        REFRESH, START_GAME, NEXT_SCREEN
+    }
     // SINGLETON FOR THE WIN!! I Hate myself.
     private static PaxosHandler globalHandler;
 
@@ -75,9 +80,10 @@ public class PaxosHandler {
         // state we are in. We need to remmeber that the highest order number must always be
         // acted on first.
         PaxosMessage.MessageType type = message.getMessageType();
-
         // If the type is a non paxos request then handle it normally
-        if((type== PaxosMessage.MessageType.TIME) || (type== PaxosMessage.MessageType.START)){
+        if((type== PaxosMessage.MessageType.TIME) || (type== PaxosMessage.MessageType.START)
+                || (type== PaxosMessage.MessageType.NEW_PLAYER) ){
+            System.out.println("Updating views");
             handleNormal(type, message);
         } else {
             handlePaxos(type, message);
@@ -86,6 +92,24 @@ public class PaxosHandler {
         history.add(message);
     }
 
+    // Methods to send non paxos things
+    public void sendName(String name){
+        // Build a message to send
+        PaxosMessage message = new PaxosMessage(0, PaxosMessage.MessageType.NEW_PLAYER, (long)0,
+                name, senderID);
+        // Send it
+        socket.sendMessage(message);
+    }
+
+    public void sendTime(String player_id, long player_time){
+        // Build a message for sending
+        PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.TIME,
+                player_time, player_id, senderID);
+        // Send  message
+        socket.sendMessage(message);
+    }
+
+    // Propose a new round
     public void proposeNewRound(PaxosMessage finalMsg){
         // Increment the round number
         round_number += 1;
@@ -102,15 +126,6 @@ public class PaxosHandler {
         currentState = State.PROPOSER;
     }
 
-
-    public void sendTime(String player_id, long player_time){
-        // Build a message for sending
-        PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.TIME,
-                player_time, player_id, senderID);
-        // Send  message
-        socket.sendMessage(message);
-    }
-
     // These methods act as proposal methods in the paxos system
     public PaxosMessage proposeWinnerMsg(String winner_id){
         // Build round number
@@ -121,7 +136,6 @@ public class PaxosHandler {
 
     public PaxosMessage proposeQuestionMsg(int question_id){
         // Build round number
-        System.out.println("Round number in propose question is " + round_number);
         PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.QUESTION,
                 (long)question_id, null, senderID);
         return message;
@@ -132,17 +146,18 @@ public class PaxosHandler {
         switch(type){
             case START:
                 // Start the game here!
+                updateApplication("start_game");
                 break;
             case TIME:
                 if(gameState != null){
                     gameState.addPlayerResponse(message.getPlayerID(), message.getValue());
+                    updateApplication("time");
                 }
                 break;
             case NEW_PLAYER:
-                if(gameState != null){
-                    // Add player
-                    Globals.userNames.add(message.getPlayerID());
-                }
+                // Add player
+                Globals.addUserName(message.getPlayerID());
+                updateApplication("new_player");
                 break;
             default:
                 break;
@@ -253,13 +268,18 @@ public class PaxosHandler {
             // I should action this action!
             System.out.println("I Should action this now! " + pending.toJson());
 
-
+            updateApplication("action");
             // Now clear it
             pending = null;
             currentState = State.UNDECIDED;
         }
     }
 
+    // Method to notify application that it might need to check change in status
+    public void updateApplication(String action){
+        NotifiableApplication app = (NotifiableApplication) NotifiableApplication.getContext();
+        app.notifyCurrentActivity(Actions.REFRESH);
+    }
     public boolean shouldAgree(int proposalNumber){
         // We agree on proposals if proposalNumber is greater than last agreed
         return (proposalNumber > round_number);
@@ -273,6 +293,8 @@ public class PaxosHandler {
             sendPromise(round_number);
         } // Ignore otherwise
     }
+
+
     // Methods to create and send accept messages
     private void sendPromise(int round_number){
          // Build the message

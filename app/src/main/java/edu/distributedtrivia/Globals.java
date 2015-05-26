@@ -19,4 +19,10 @@ public class Globals {
     public static boolean host;
     public static List<String> userNames = new ArrayList<String>();
 
+    public static void addUserName(String name){
+        if (!userNames.contains(name)){
+            userNames.add(name);
+        }
+    }
+
 }
