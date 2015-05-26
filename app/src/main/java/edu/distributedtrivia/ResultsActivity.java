@@ -36,11 +36,15 @@ public class ResultsActivity extends ActionBarActivity {
         }
 
         nextQuestion = (Button) this.findViewById(R.id.nextQuestion);
+        if (gameFinished) {
+            nextQuestion.setText("Main Menu");
+        }else {
+                nextQuestion.setText("Next Question");
+        }
         nextQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (gameFinished){
-                    nextQuestion.setText("Main Menu");
                     Intent i = new Intent();
                     i.setClass(ResultsActivity.this, MainActivity.class);
                     startActivity(i);

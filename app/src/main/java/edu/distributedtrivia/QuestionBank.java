@@ -20,17 +20,12 @@ public class QuestionBank {
 
     public QuestionBank(Context context) {
         try {
-            System.out.println("INIT");
 
             // read the json file
             String json = loadJSONFromAsset(context);
 
-            System.out.println("READ FILE");
-
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
-
-            System.out.println("PARSE JSON");
 
             // get an array from the JSON object
             JSONArray jsonQuestions = (JSONArray) jsonObject.get("questions");
@@ -38,7 +33,6 @@ public class QuestionBank {
             for (int i = 0; i < jsonQuestions.size(); i++) {
                 JSONObject jsonQuestion = (JSONObject) jsonQuestions.get(i);
                 questions.add(new Question(jsonQuestion));
-                System.out.println(jsonQuestion);
             }
 
         } catch (ParseException ex) {

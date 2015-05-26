@@ -123,6 +123,8 @@ public class QuestionActivity extends ActionBarActivity {
                 //TODO Reach consensus on timing
 
                 enableAnswers();
+                buzzer.setEnabled(false);
+                slowBuzzer.setEnabled(false);
             }
         });
 
@@ -136,12 +138,14 @@ public class QuestionActivity extends ActionBarActivity {
                 //TODO Reach consensus without Paxos
 
                 enableAnswers();
+                buzzer.setEnabled(false);
+                slowBuzzer.setEnabled(false);
             }
         });
         if (Globals.gs.isPaxos()){
-            slowBuzzer.setVisibility(View.VISIBLE);
-        }else{
             slowBuzzer.setVisibility(View.INVISIBLE);
+        }else{
+            slowBuzzer.setVisibility(View.VISIBLE);
         }
 
         startTime = System.nanoTime();
@@ -170,16 +174,16 @@ public class QuestionActivity extends ActionBarActivity {
     }
 
     public void enableAnswers(){
-        answerA.setClickable(true);
-        answerB.setClickable(true);
-        answerC.setClickable(true);
-        answerD.setClickable(true);
+        answerA.setEnabled(true);
+        answerB.setEnabled(true);
+        answerC.setEnabled(true);
+        answerD.setEnabled(true);
     }
 
     public void disableAnswers(){
-        answerA.setClickable(false);
-        answerB.setClickable(false);
-        answerC.setClickable(false);
-        answerD.setClickable(false);
+        answerA.setEnabled(false);
+        answerB.setEnabled(false);
+        answerC.setEnabled(false);
+        answerD.setEnabled(false);
     }
 }

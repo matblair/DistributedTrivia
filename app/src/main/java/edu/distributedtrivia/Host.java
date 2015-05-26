@@ -89,6 +89,8 @@ public class Host extends ActionBarActivity {
                 name = edtName.getText().toString();
                 btnName.setEnabled(false);
                 edtName.setEnabled(false);
+                startGame.setEnabled(true);
+                startStupid.setEnabled(true);
 
                 Globals.userNames.add(name);
                 Globals.userPlayer = new Player(name);
@@ -134,6 +136,7 @@ public class Host extends ActionBarActivity {
         });
 
         startGame = (Button) this.findViewById(R.id.btnStart);
+        startGame.setEnabled(false);
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -145,6 +148,7 @@ public class Host extends ActionBarActivity {
         });
 
         startStupid = (Button) this.findViewById(R.id.btnStartStupid);
+        startStupid.setEnabled(false);
         startStupid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

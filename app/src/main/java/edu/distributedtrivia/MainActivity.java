@@ -27,7 +27,7 @@ public class MainActivity extends ActionBarActivity {
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Globals.host = false;
                 Intent intent = new Intent(MainActivity.this, ConnectTo.class);
                 startActivity(intent);
 
@@ -40,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
         btnHost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Globals.host = true;
                 Intent intent = new Intent(MainActivity.this, Host.class);
                 startActivity(intent);
 

@@ -5,6 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import edu.distributedtrivia.QuestionBank;
@@ -22,9 +24,7 @@ public class GameState {
     public GameState(Context context) {
         roundNum = 1;
         players = new ArrayList();
-        System.out.println("CREATE QB");
         qB = new QuestionBank(context);
-        System.out.println("CREATED");
     }
 
     public void gameSetup(int numRounds, boolean paxos){
@@ -35,6 +35,7 @@ public class GameState {
         for(String name : Globals.userNames){
             players.add(new Player(name));
         }
+        Globals.userNames.clear();
     }
 
     public boolean isPaxos() {
@@ -58,6 +59,19 @@ public class GameState {
                 correctAnswer = correct;
                 break;
             }
+        }
+
+        Collections.sort(players, new Comparator<Player>() {
+            @Override
+            public int compare(Player p1, Player p2) {
+                return p1.getScore() - p2.getScore();
+            }
+        });
+
+        for (int i=0; i<players.size(); i++) {
+            Player newPos = players.get(i);
+            newPos.setPosition(i+1);
+            players.set(i, newPos);
         }
     }
 

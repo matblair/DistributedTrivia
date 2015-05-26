@@ -34,7 +34,7 @@ public class Player {
         if(correct) {
             score += Globals.CORRECT_SCORE;
         }else{
-            score =- Globals.INCORRECT_SCORE;
+            score -= Globals.INCORRECT_SCORE;
         }
     }
 
