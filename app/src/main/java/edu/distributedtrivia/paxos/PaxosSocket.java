@@ -62,4 +62,13 @@ public class PaxosSocket {
         }
     }
 
+    public void sendBackgroundMessage(final PaxosMessage message){
+        Thread t = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                sendMessage(message);
+            }});
+        t.start();
+    }
+
 }

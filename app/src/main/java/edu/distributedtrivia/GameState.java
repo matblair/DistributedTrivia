@@ -17,7 +17,6 @@ public class GameState {
     // Constants for the game setup
     private static final int FIRST_QUESTION =0;
 
-
     // Variables to be replicated
     private int numRounds;
     private int roundNum;

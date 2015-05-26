@@ -1,6 +1,7 @@
 package edu.distributedtrivia;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -66,6 +67,7 @@ public class ConnectTo extends NotifiableActivity {
                     btnName.setEnabled(false);
                     edtName.setEnabled(false);
                     Globals.userNames.add(name);
+                    Globals.userPlayer = new Player(name);
 
                     // Start the paxos thread listener in the background
                     Thread proc = new Thread(new PaxosListener(name));
@@ -88,7 +90,10 @@ public class ConnectTo extends NotifiableActivity {
             case START_GAME:
                 // Move into new game
                 nameBroadcaster.stopBroadcasting();
-                Toast.makeText(getApplicationContext(), "I SHOULD START NOW!", Toast.LENGTH_LONG).show();
+                // Start the new activity for the game
+                Intent i = new Intent();
+                i.setClass(ConnectTo.this, QuestionActivity.class);
+                startActivity(i);
                 break;
             case REFRESH:
                 adapter.notifyDataSetChanged();

@@ -132,12 +132,7 @@ public class Host extends NotifiableActivity {
         startGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Stop broadcasting name
-
-
-                // Initiate the game setup
-                Globals.gs.gameSetup(numOfRounds, true);
-                nameBroadcaster.stopBroadcasting();
+                generalisedSetup(true);
 
                 // Start the new activity for the game
                 Intent i = new Intent();
@@ -153,7 +148,7 @@ public class Host extends NotifiableActivity {
         startStupid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Globals.gs.gameSetup(numOfRounds, false);
+                generalisedSetup(false);
                 Intent i = new Intent();
                 i.setClass(Host.this, QuestionActivity.class);
                 startActivity(i);
@@ -162,6 +157,13 @@ public class Host extends NotifiableActivity {
 
     }
 
+    private void generalisedSetup(Boolean paxos){
+        nameBroadcaster.stopBroadcasting();
+        Globals.gs.gameSetup(numOfRounds, paxos);
+        PaxosHandler handler = PaxosHandler.getHandler(name);
+        handler.setGameState(Globals.gs);
+        handler.sendStart(paxos, numOfRounds);
+    }
 
     // The public method to allow this activity to update. Doesn't do anything except update list
     public void notifyActivity(PaxosHandler.Actions action) {

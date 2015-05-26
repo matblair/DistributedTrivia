@@ -25,7 +25,6 @@ public class NotifiableApplication extends Application {
 
     public static NotifiableApplication getContext(){
         return instance;
-        // or return instance.getApplicationContext();
     }
 
     @Override
