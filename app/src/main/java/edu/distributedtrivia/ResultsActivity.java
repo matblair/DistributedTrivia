@@ -49,7 +49,7 @@ public class ResultsActivity extends ActionBarActivity {
                     i.setClass(ResultsActivity.this, MainActivity.class);
                     startActivity(i);
                 }else {
-                    Globals.gs.nextRound();
+                    Globals.gs.nextRound(9);
 
                     //TODO Distribute new round state with everyone else
 

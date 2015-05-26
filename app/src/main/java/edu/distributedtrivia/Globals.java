@@ -18,4 +18,5 @@ public class Globals {
     public static Player userPlayer;
     public static boolean host;
     public static List<String> userNames = new ArrayList<String>();
+
 }

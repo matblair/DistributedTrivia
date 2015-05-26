@@ -47,33 +47,34 @@
         android:id="@+id/btnJoin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnHost"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:background="#C9E5F8"
         android:text="JOIN"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:layout_above="@+id/btnHost"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/btnHost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnAbout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:background="#9AD2FA"
         android:text="HOST"
-        android:textColor="#ffffff" />
+        android:textColor="#ffffff"
+        android:layout_above="@+id/btnAbout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/btnAbout"
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:background="#6BBFFA"
+        android:text="ABOUT"
+        android:textColor="#FFFFFF"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:background="#6BBFFA"
-        android:text="ABOUT"
-        android:textColor="#FFFFFF" />
+        android:layout_marginBottom="22dp" />
 </RelativeLayout>
 </ScrollView>

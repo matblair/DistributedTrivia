@@ -20,6 +20,7 @@ public class PaxosSocket {
     // Private variables for use in receiving;
     private MulticastSocket clientSocket;
 
+    // Again a singleton
 
     public PaxosSocket (){
         try {
