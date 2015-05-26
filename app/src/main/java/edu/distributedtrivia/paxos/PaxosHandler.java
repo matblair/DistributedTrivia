@@ -144,7 +144,7 @@ public class PaxosHandler {
         }
     }
 
-    // Private method to handle paxos
+        // Private method to handle paxos
     private void handlePaxos(PaxosMessage.MessageType type, PaxosMessage message) {
         // If we are in a proposal state
         System.out.println("I was called in handle Paxos ID is: " + senderID + " in state " + currentState);

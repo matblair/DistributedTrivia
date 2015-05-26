@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
 
-        Thread proc = new Thread(new PaxosListener("Mat"));
+        Thread proc = new Thread(new PaxosListener("Right"));
         proc.start();
 
     }
