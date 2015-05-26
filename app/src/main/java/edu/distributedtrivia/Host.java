@@ -1,6 +1,5 @@
 package edu.distributedtrivia;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -36,7 +35,7 @@ import java.nio.ByteOrder;
 import java.util.List;
 
 
-public class Host extends ActionBarActivity {
+public class Host extends NotifiableActivity {
 
     int numOfRounds;
 
@@ -51,6 +50,9 @@ public class Host extends ActionBarActivity {
     String name;
     MyArrayAdapter adapter;
 
+    public void notifyActivity(){
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,7 +167,6 @@ public class Host extends ActionBarActivity {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         // API 11
     void startMyTask(AsyncTask<List<String>, List<String>, List<String>> asyncTask) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)

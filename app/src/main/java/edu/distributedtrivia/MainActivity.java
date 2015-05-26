@@ -29,8 +29,7 @@ class TestSender implements Runnable {
     }
 }
 
-public class MainActivity extends ActionBarActivity {
-
+public class MainActivity extends NotifiableActivity {
 
     Button btnJoin, btnHost, btnAbout;
 
@@ -70,14 +69,18 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Thread proc = new Thread(new TestSender("hello"));
                 proc.start();
-//                Toast.makeText(getApplicationContext(), "Sent a message!", Toast.LENGTH_SHORT).show();
 
             }
         });
 
 
-        Thread proc = new Thread(new PaxosListener("Left"));
+
+        Thread proc = new Thread(new PaxosListener("Right"));
         proc.start();
+    }
+
+    public void notifyActivity(){
+        Toast.makeText(getApplicationContext(), "Finished paxos!", Toast.LENGTH_SHORT).show();
 
     }
 }
