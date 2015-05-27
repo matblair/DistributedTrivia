@@ -12,7 +12,7 @@ import edu.distributedtrivia.Player;
 
 
 /**
- * Created by Mat on 26/05/15.
+ * Created by Mat on 16/05/15.
  */
 public class PaxosHandler {
 
@@ -41,6 +41,7 @@ public class PaxosHandler {
     // The previously promised message
     private PaxosMessage pending;
     private PaxosMessage future;
+    private Boolean complete;
 
     // Save all the responses so we know when we have a quorum
     private ArrayList<String> quorum;
@@ -139,10 +140,31 @@ public class PaxosHandler {
                 (long)0, null, senderID);
         // Save the message that we ultimate want to create
         future = finalMsg;
+        handleRetry();
+        complete = false;
         // Send the message
         socket.sendBackgroundMessage(message);
         // Become a proposer
         currentState = State.PROPOSER;
+    }
+
+        private void handleRetry(){
+        Thread t = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                   Thread.sleep(3000);
+                    if(!complete){
+                        // Repropose
+                        proposeNewRound(future);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        t.start();
+
     }
 
     // These methods act as proposal methods in the paxos system
@@ -224,7 +246,6 @@ public class PaxosHandler {
             case WINNER:
             case QUESTION:
             case SCORE:
-                System.out.println("HAndling with state is " + currentState + " " + message.toJson());
                 // If it's the current round number then it is what we have agreed to
                 if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTOR)) {
                     // Accept the message
@@ -234,7 +255,6 @@ public class PaxosHandler {
                 } // Ignore otherwise
                 break;
             case ACTION:
-                System.out.println("Doing stuff!");
                 if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTED)) {
                     // Action the existing thing
                     actionConsensus();
@@ -249,6 +269,7 @@ public class PaxosHandler {
                         sendAction(message);
                         // Then action the proposal ourselves
                         pending = future;
+                        complete = true;
                         actionConsensus();
                     }
                 }
@@ -272,9 +293,9 @@ public class PaxosHandler {
     }
 
     private boolean haveQuorum(){
+        System.out.println(quorum);
         // We have quorum when everyone has accepted
-        return true;
-//        return (quorums.size() >= Globals.userNames.size());
+        return (quorum.size() >= Globals.userNames.size());
     }
 
     private void clearQuorum(){
@@ -389,9 +410,9 @@ public class PaxosHandler {
 
     }
 
-    public static void reset(){
+    public static void reset() {
         if (globalHandler != null) {
-            if(globalHandler.gameState != null) {
+            if (globalHandler.gameState != null) {
                 globalHandler.gameState = null;
             }
             globalHandler = null;

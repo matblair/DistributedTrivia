@@ -6,7 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- * Created by Mat on 26/05/15.
+ * Created by Mat on 16/05/15.
  * A message object that will be sent to various paxos clients in order to then be accepted or
  * declined
  */

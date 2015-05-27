@@ -1,7 +1,7 @@
 package edu.distributedtrivia.paxos;
 
 /**
- * Created by Mat on 26/05/15.
+ * Created by Mat on 16/05/15.
  *
  */
 public class PaxosListener implements Runnable {
