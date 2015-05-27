@@ -83,20 +83,9 @@
             android:background="#C9E5F8"
             android:text="Start"
             android:textColor="#FFFFFF"
-            android:layout_alignRight="@+id/lstContestants"
-            android:layout_alignEnd="@+id/lstContestants"
-            android:layout_above="@+id/btnStartStupid" />
-
-        <Button
-            android:id="@+id/btnStartStupid"
-        android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#9AD2FA"
-            android:text="Start Stupid"
-            android:textColor="#ffffff"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/lstContestants"
-            android:layout_alignEnd="@+id/lstContestants" />
+            android:layout_alignRight="@+id/btnName"
+            android:layout_alignEnd="@+id/btnName" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
