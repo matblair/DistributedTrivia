@@ -25,11 +25,13 @@
         </activity>
         <activity
             android:name=".ConnectTo"
-            android:label="@string/title_activity_connect_to" >
+            android:label="@string/title_activity_connect_to"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".Host"
-            android:label="@string/title_activity_host" >
+            android:label="@string/title_activity_host"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".QuestionActivity"
