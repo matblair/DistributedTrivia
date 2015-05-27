@@ -1,5 +1,4 @@
 # Distributed Trivia - A Paxos Approach
----------
 ### Introduction
 This project an Android application that demonstrates the implementation of the Leaderless Paxos algorithm. To demonstrate the algorithm this project implements a trivia game. The game is played using multiple Android devices. One device will act as the host to initate the game, others will join. 
 
