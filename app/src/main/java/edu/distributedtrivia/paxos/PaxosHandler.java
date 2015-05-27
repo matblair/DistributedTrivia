@@ -176,11 +176,10 @@ public class PaxosHandler {
         switch(type){
             case START:
                 if (Globals.gs == null){
-                   handleStart(message);
+                    handleStart(message);
                 }
                 break;
             case TIME:
-                System.out.println("Reciving and handling!");
                 if(gameState != null){
                     gameState.addPlayerResponse(message.getPlayerID(), message.getValue());
                     updateApplication(Actions.BUZZED);
@@ -188,7 +187,7 @@ public class PaxosHandler {
                 break;
             case NEW_PLAYER:
                 // Add player if the game hasn't started
-                if (!Globals.gs.hasStarted()) {
+                if ((Globals.gs==null) || !Globals.gs.hasStarted()) {
                     Globals.addUserName(message.getPlayerID());
                     updateApplication(Actions.REFRESH);
                 }
@@ -225,6 +224,7 @@ public class PaxosHandler {
             case WINNER:
             case QUESTION:
             case SCORE:
+                System.out.println("HAndling with state is " + currentState + " " + message.toJson());
                 // If it's the current round number then it is what we have agreed to
                 if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTOR)) {
                     // Accept the message
@@ -234,6 +234,7 @@ public class PaxosHandler {
                 } // Ignore otherwise
                 break;
             case ACTION:
+                System.out.println("Doing stuff!");
                 if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTED)) {
                     // Action the existing thing
                     actionConsensus();
@@ -246,6 +247,9 @@ public class PaxosHandler {
                     if(haveQuorum()){
                         // Then send a message to action
                         sendAction(message);
+                        // Then action the proposal ourselves
+                        pending = future;
+                        actionConsensus();
                     }
                 }
             case PROMISE:
@@ -294,23 +298,7 @@ public class PaxosHandler {
                 PaxosMessage.MessageType.ACCEPT,(long)0, null, senderID);
         // Send message
         socket.sendBackgroundMessage(response);
-    }
-
-    // Methods to update state based on acceptance
-    private void acceptQuestion(PaxosMessage message){
-        // Assume if we've got here we can update
-        gameState.nextRound((int)message.getValue());
-    }
-
-    private void acceptProposal(PaxosMessage message){
-        // Save the message to pending
-        pending = message;
-        // Build accept message
-        PaxosMessage response = new PaxosMessage(message.getRoundNumber(),
-                PaxosMessage.MessageType.ACTION, (long)0, null, senderID);
-        // Send that message
-        socket.sendBackgroundMessage(message);
-        // Become accepted
+        // Set our state to accepted
         currentState = State.ACCEPTED;
     }
 
@@ -322,14 +310,26 @@ public class PaxosHandler {
             PaxosMessage.MessageType type = pending.getMessageType();
             switch(type){
                 case SCORE:
-                    // Update the score for the given player
-                    Player player = Globals.gs.getPlayer(pending.getPlayerID());
-                    Boolean result = (pending.getValue()==1);
-                    Globals.gs.updatePlayer(player, result);
+                    System.out.println("We expect to update score for: " + pending.getPlayerID() + " when we are " + Globals.userPlayer.getName());
+                    System.out.println("Our result is " + pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName()));
+
+                    if(!(pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName()))){
+                        System.out.println("We should be updating?");
+                        // Update the score for the given player
+                        Player player = Globals.gs.getPlayer(pending.getPlayerID());
+                        Boolean result = (pending.getValue()==1);
+                        Globals.gs.updatePlayer(player, result);
+                    }
+                    updateApplication(Actions.NEXT_SCREEN);
+
                     break;
                 case WINNER:
                     // Check if we are the winner
-                    if(pending.getPlayerID() == Globals.userPlayer.getName()){
+                    System.out.println("We expect to announce winner for: " + pending.getPlayerID() + " when we are " + Globals.userPlayer.getName());
+                    System.out.println("RESULT IS " + pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName()));
+                    System.out.println("RESULT IS " + ("Mat".equals("Mat")));
+
+                    if(pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName())){
                         // Then we won! Get the view to process result
                        updateApplication(Actions.FIRST);
                     } else {

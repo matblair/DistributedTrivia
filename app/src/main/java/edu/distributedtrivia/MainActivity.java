@@ -19,7 +19,6 @@ public class MainActivity extends ActionBarActivity {
         btnHost = (Button) this.findViewById(R.id.btnHost);
         btnAbout = (Button) this.findViewById(R.id.btnAbout);
 
-
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

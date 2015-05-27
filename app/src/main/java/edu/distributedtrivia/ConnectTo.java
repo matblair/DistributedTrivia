@@ -48,7 +48,6 @@ public class ConnectTo extends NotifiableActivity {
             lstNames.setAdapter(adapter);
             adapter.notifyDataSetChanged();
 
-
             lstNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -66,6 +65,7 @@ public class ConnectTo extends NotifiableActivity {
                     name = edtName.getText().toString();
                     btnName.setEnabled(false);
                     edtName.setEnabled(false);
+
                     Globals.userNames.add(name);
                     Globals.userPlayer = new Player(name);
 

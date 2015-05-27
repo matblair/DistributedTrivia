@@ -103,10 +103,7 @@ public class QuestionActivity extends NotifiableActivity {
             @Override
             public void onClick(View view) {
                 buzzTime = System.nanoTime() - startTime;
-
-                Toast.makeText(QuestionActivity.this, Long.toString(buzzTime), Toast.LENGTH_LONG).show();
                 notifyBuzz();
-
                 enableAnswers();
                 buzzer.setEnabled(false);
             }
@@ -151,7 +148,6 @@ public class QuestionActivity extends NotifiableActivity {
             @Override
             public void run() {
                 try {
-                    System.out.println("I have started!");
                     countdownTimer = INITIAL_COUNTDOWN;
                     while(noProposal && (countdownTimer>0)){
                         // Set the value on the text field!
@@ -178,7 +174,6 @@ public class QuestionActivity extends NotifiableActivity {
                     @Override
                     public void run() {
                         Toast.makeText(QuestionActivity.this, "To Slow!! Waiting For Results", Toast.LENGTH_LONG).show();
-//                        nextScreen();
                     }});
                 noProposal = false;
                 break;
@@ -188,7 +183,7 @@ public class QuestionActivity extends NotifiableActivity {
                     @Override
                     public void run() {
                         Toast.makeText(QuestionActivity.this, "Yay you won this round!!", Toast.LENGTH_LONG).show();
-//                        nextScreen();
+                        generalisedAnswer(chosenAnswer);
                     }});
                 break;
             case ANSWERED:
@@ -196,10 +191,18 @@ public class QuestionActivity extends NotifiableActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(QuestionActivity.this, "Sorry, someone else won that question!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(QuestionActivity.this, "Sorry, someone else won that question! Waiting for next question", Toast.LENGTH_LONG).show();
 //                        nextScreen();
                     }});
-
+                break;
+            case NEXT_SCREEN:
+                // The case when someone else won, not you
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(QuestionActivity.this, "Working out scores!", Toast.LENGTH_LONG).show();
+                        nextScreen();
+                    }});
                 break;
             case BUZZED:
                 runOnUiThread(new Runnable() {
@@ -218,13 +221,14 @@ public class QuestionActivity extends NotifiableActivity {
         startActivity(i);
     }
 
+
     public void verifyWinner() {
         // Pick the fastest person
         String fastest = Globals.gs.getFastestPlayer();
 
         // Get the handler
         PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
-        PaxosMessage message = handler.proposeWinnerMsg(fastest);
+        PaxosMessage message = handler.proposeWinnerMsg("Mat");
 
         // Propose new round
         handler.proposeNewRound(message);
