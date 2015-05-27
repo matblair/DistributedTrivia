@@ -6,6 +6,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
 
+import edu.distributedtrivia.paxos.PaxosHandler;
+
 public class MainActivity extends ActionBarActivity {
 
     Button btnJoin, btnHost, btnAbout;
@@ -46,6 +48,20 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(i);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        PaxosHandler.reset();
+
+        if(Globals.userNames != null) {
+            Globals.userNames.clear();
+        }
+        if(Globals.gs != null) {
+            Globals.gs = null;
+        }
     }
 }
 

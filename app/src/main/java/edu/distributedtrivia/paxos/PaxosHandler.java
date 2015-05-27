@@ -380,4 +380,13 @@ public class PaxosHandler {
 
     }
 
+    public static void reset(){
+        if (globalHandler != null) {
+            if(globalHandler.gameState != null) {
+                globalHandler.gameState = null;
+            }
+            globalHandler.round_number = 0;
+        }
+    }
+
 }
