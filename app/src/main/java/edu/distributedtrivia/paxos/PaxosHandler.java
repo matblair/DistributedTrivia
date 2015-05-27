@@ -135,20 +135,20 @@ public class PaxosHandler {
         round_number += 1;
         // Build the message
         System.out.println("Round number in propose new round is " + round_number);
-
         PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.ROUND_START,
                 (long)0, null, senderID);
         // Save the message that we ultimate want to create
         future = finalMsg;
         handleRetry();
         complete = false;
+        clearQuorum();
         // Send the message
         socket.sendBackgroundMessage(message);
         // Become a proposer
         currentState = State.PROPOSER;
     }
 
-        private void handleRetry(){
+    private void handleRetry(){
         Thread t = new Thread(new Runnable(){
             @Override
             public void run() {
@@ -277,7 +277,8 @@ public class PaxosHandler {
                 // If we are not a proposer we don't care about it
                 if(currentState==State.PROPOSER){
                     // Save the result
-                    // If we have a quorum (i.e. everyone joined
+                    quorum.add(message.getSender());
+                    // If we have a quorum (i.e. everyone joined)
                     if(haveQuorum()){
                         // Send the message we were going to send
                         future.setRoundNumber(round_number);
@@ -326,8 +327,6 @@ public class PaxosHandler {
     public void actionConsensus(){
         // Find the existing action
         if (pending != null){
-
-            System.out.println("I Should action this now! " + pending.toJson());
             // I should action this action!
             PaxosMessage.MessageType type = pending.getMessageType();
             switch(type){
