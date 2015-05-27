@@ -19,16 +19,19 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ConnectTo"
-            android:label="@string/title_activity_connect_to" >
+            android:label="@string/title_activity_connect_to"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".Host"
-            android:label="@string/title_activity_host" >
+            android:label="@string/title_activity_host"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".QuestionActivity"
@@ -37,6 +40,10 @@
         <activity
             android:name=".ResultsActivity"
             android:label="@string/title_activity_results" >
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about" >
         </activity>
     </application>
 

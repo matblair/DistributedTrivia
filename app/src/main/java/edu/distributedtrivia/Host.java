@@ -26,7 +26,6 @@ public class Host extends NotifiableActivity {
     // All the view objects
     private TextView numQuestionsField;
     private Button startGame;
-    private Button startStupid;
     private Button increase;
     private Button decrease;
     private EditText edtName;
@@ -73,7 +72,6 @@ public class Host extends NotifiableActivity {
                 btnName.setEnabled(false);
                 edtName.setEnabled(false);
                 startGame.setEnabled(true);
-                startStupid.setEnabled(true);
 
                 // Add to the global usernames
                 Globals.userNames.add(name);
@@ -135,20 +133,6 @@ public class Host extends NotifiableActivity {
                 generalisedSetup(true);
 
                 // Start the new activity for the game
-                Intent i = new Intent();
-                i.setClass(Host.this, QuestionActivity.class);
-                startActivity(i);
-            }
-        });
-
-
-        // This button wont use paxos
-        startStupid = (Button) this.findViewById(R.id.btnStartStupid);
-        startStupid.setEnabled(false);
-        startStupid.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                generalisedSetup(false);
                 Intent i = new Intent();
                 i.setClass(Host.this, QuestionActivity.class);
                 startActivity(i);
