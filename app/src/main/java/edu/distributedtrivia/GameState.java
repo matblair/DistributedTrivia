@@ -48,7 +48,7 @@ public class GameState {
         try {
             currentQuestion = qB.nextQuestion(FIRST_QUESTION);
         } catch(UnknownQuestion e){
-            System.out.println("We done fucked up now.");
+            System.out.println("No Question.");
         }
 
         for(String name : Globals.userNames){
@@ -78,7 +78,7 @@ public class GameState {
         try {
             currentQuestion = qB.nextQuestion(questionID);
         } catch(UnknownQuestion e){
-            System.out.println("We done fucked up even more!");
+        System.out.println("No Question!");
         }
         this.responseTime.clear();
         roundNum++;
@@ -143,14 +143,12 @@ public class GameState {
 
     // Method to add response time
     public void addPlayerResponse(String player_id, long value){
-        System.out.println("I am a fucking god");
         this.responseTime.put(player_id, value);
     }
 
     // Find the fastest
     public String getFastestPlayer(){
             long min = Long.MAX_VALUE;
-            System.out.println("Doing stuff, respones has " + responseTime.size());
             String fastest = null;
             Iterator iterator = responseTime.entrySet().iterator();
             while(iterator.hasNext()) {

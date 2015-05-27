@@ -331,9 +331,6 @@ public class PaxosHandler {
             PaxosMessage.MessageType type = pending.getMessageType();
             switch(type){
                 case SCORE:
-                    System.out.println("We expect to update score for: " + pending.getPlayerID() + " when we are " + Globals.userPlayer.getName());
-                    System.out.println("Our result is " + pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName()));
-
                     if(!(pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName()))){
                         System.out.println("We should be updating?");
                         // Update the score for the given player
@@ -348,9 +345,6 @@ public class PaxosHandler {
                 case WINNER:
                     // Check if we are the winner
                     System.out.println("We expect to announce winner for: " + pending.getPlayerID() + " when we are " + Globals.userPlayer.getName());
-                    System.out.println("RESULT IS " + pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName()));
-                    System.out.println("RESULT IS " + ("Mat".equals("Mat")));
-
                     if(pending.getPlayerID().equalsIgnoreCase(Globals.userPlayer.getName())){
                         // Then we won! Get the view to process result
                        updateApplication(Actions.FIRST);

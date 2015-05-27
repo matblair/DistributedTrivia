@@ -200,7 +200,6 @@ public class QuestionActivity extends NotifiableActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(QuestionActivity.this, "Working out scores!", Toast.LENGTH_SHORT).show();
                         nextScreen();
                     }});
                 break;
@@ -208,7 +207,6 @@ public class QuestionActivity extends NotifiableActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("Yo I got here!");
                         Toast.makeText(QuestionActivity.this, "Someone else buzzed in!", Toast.LENGTH_SHORT).show();
                     }});
                 break;
