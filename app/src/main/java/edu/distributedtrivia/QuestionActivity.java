@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import edu.distributedtrivia.paxos.PaxosHandler;
+import edu.distributedtrivia.paxos.PaxosMessage;
 
 
 public class QuestionActivity extends NotifiableActivity {
@@ -26,18 +27,18 @@ public class QuestionActivity extends NotifiableActivity {
     private TextView roundNumber;
     private TextView currentPosition;
     private TextView questionText;
-    private TextView timeRemaining;
 
     private Button answerA;
     private Button answerB;
     private Button answerC;
     private Button answerD;
     private Button buzzer;
-    private Button slowBuzzer;
+
 
     // Timer for countdown to choose answer
-    private boolean showTimer;
+    private boolean noProposal;
     private int countdownTimer;
+    private Answer chosenAnswer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +56,13 @@ public class QuestionActivity extends NotifiableActivity {
         questionText = (TextView) this.findViewById(R.id.questionText);
         questionText.setText(roundQuestion.getQuestion());
 
-        timeRemaining = (TextView) this.findViewById(R.id.timeRemaining);
-        timeRemaining.setVisibility(View.INVISIBLE);
-        timeRemaining.setText("");
-
         answerA = (Button) this.findViewById(R.id.answerA);
         answerA.setText("A: " + roundQuestion.getA().getAnswer());
         answerA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generalisedAnswer(roundQuestion.getA());
+                chosenAnswer = roundQuestion.getA();
+                startCountdownTimer();
             }
         });
 
@@ -73,7 +71,8 @@ public class QuestionActivity extends NotifiableActivity {
         answerB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generalisedAnswer(roundQuestion.getB());
+                chosenAnswer = roundQuestion.getB();
+                startCountdownTimer();
             }
         });
 
@@ -82,7 +81,8 @@ public class QuestionActivity extends NotifiableActivity {
         answerC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generalisedAnswer(roundQuestion.getC());
+                chosenAnswer = roundQuestion.getC();
+                startCountdownTimer();
             }
         });
 
@@ -91,7 +91,8 @@ public class QuestionActivity extends NotifiableActivity {
         answerD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generalisedAnswer(roundQuestion.getD());
+                chosenAnswer = roundQuestion.getD();
+                startCountdownTimer();
             }
         });
 
@@ -104,32 +105,12 @@ public class QuestionActivity extends NotifiableActivity {
                 buzzTime = System.nanoTime() - startTime;
 
                 Toast.makeText(QuestionActivity.this, Long.toString(buzzTime), Toast.LENGTH_LONG).show();
-
-                //TODO Reach consensus on timing
-
-                enableAnswers();
-                buzzer.setEnabled(false);
-                slowBuzzer.setEnabled(false);
-            }
-        });
-
-        slowBuzzer = (Button) this.findViewById(R.id.goSlow);
-        slowBuzzer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buzzTime = System.nanoTime() - startTime;
                 notifyBuzz();
 
                 enableAnswers();
                 buzzer.setEnabled(false);
-                slowBuzzer.setEnabled(false);
             }
         });
-        if (Globals.gs.isPaxos()){
-            slowBuzzer.setVisibility(View.INVISIBLE);
-        }else{
-            slowBuzzer.setVisibility(View.VISIBLE);
-        }
 
         startTime = System.nanoTime();
     }
@@ -163,10 +144,6 @@ public class QuestionActivity extends NotifiableActivity {
         // Get the paxos handler and get ready to send
         PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
         handler.sendTime(Globals.userPlayer.getName(), buzzTime);
-
-        // Update feedback
-        countdownTimer = INITIAL_COUNTDOWN;
-        startCountdownTimer();
     }
 
     public void startCountdownTimer(){
@@ -174,14 +151,15 @@ public class QuestionActivity extends NotifiableActivity {
             @Override
             public void run() {
                 try {
-                    timeRemaining.setVisibility(View.VISIBLE);
-                    timeRemaining.setText(countdownTimer);
-                    while(showTimer && (countdownTimer>0)){
+                    System.out.println("I have started!");
+                    countdownTimer = INITIAL_COUNTDOWN;
+                    while(noProposal && (countdownTimer>0)){
                         // Set the value on the text field!
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
                         countdownTimer -= 1;
-                        timeRemaining.setText(countdownTimer);
+                        break;
                     }
+                    generalisedAnswer(chosenAnswer);
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -193,23 +171,78 @@ public class QuestionActivity extends NotifiableActivity {
     // Method to update the view
     public void notifyActivity(PaxosHandler.Actions action){
         switch (action){
+            case PROPOSAL:
+                // We have received a proposal, we don't have to wait anymore!
+                // The case when someone you won!
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(QuestionActivity.this, "To Slow!! Waiting For Results", Toast.LENGTH_LONG).show();
+                        nextScreen();
+                    }});
+                noProposal = false;
+            case FIRST:
+                // The case when someone you won!
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(QuestionActivity.this, "Yay you won this round!!", Toast.LENGTH_LONG).show();
+                        nextScreen();
+                    }});
+
             case ANSWERED:
-                showTimer = false;
+                // The case when someone else won, not you
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(QuestionActivity.this, "Sorry, someone else won that question!", Toast.LENGTH_LONG).show();
+                        nextScreen();
+                    }});
+
                 break;
             case BUZZED:
-                Toast.makeText(QuestionActivity.this, "Someone else buzzed in!", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Yo I got here!");
+                        Toast.makeText(QuestionActivity.this, "Someone else buzzed in!", Toast.LENGTH_LONG).show();
+                    }});
                 break;
         }
     }
 
-    public void generalisedAnswer(Answer answer){
-        boolean result = roundQuestion.verifyAnswer(answer);
-        Globals.userPlayer.updateScore(result);
-        Globals.gs.updatePlayer(Globals.userPlayer, result);
+    public void nextScreen(){
         Intent i = new Intent();
         i.setClass(QuestionActivity.this, ResultsActivity.class);
         startActivity(i);
     }
+
+    public void verifyWinner(Answer answer) {
+        // Pick the fastest person
+        String fastest = Globals.gs.getFastestPlayer();
+
+        // Get the handler
+        PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
+        PaxosMessage message = handler.proposeWinnerMsg(fastest);
+
+        // Propose new round
+        handler.proposeNewRound(message);
+    }
+
+    public void generalisedAnswer(Answer answer) {
+        // We know we won, lets see what we have to do
+        boolean result = roundQuestion.verifyAnswer(answer);
+
+        // We want to update our score
+        Globals.userPlayer.updateScore(result);
+        Globals.gs.updatePlayer(Globals.userPlayer, result);
+
+        // Get the score
+        PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
+        PaxosMessage message = handler.proposeScoreMsg(Globals.userPlayer.getName(), Globals.userPlayer.getScore());
+        handler.proposeNewRound(message);
+    }
+
 
     public void enableAnswers(){
         answerA.setEnabled(true);

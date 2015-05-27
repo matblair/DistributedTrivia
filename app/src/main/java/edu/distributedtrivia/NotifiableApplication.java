@@ -17,6 +17,12 @@ public class NotifiableApplication extends Application {
         this.currentActivity = notifiable;
     }
 
+    public synchronized  void removeNotifiable(NotifiableActivity notifiableActivity){
+        if(this.currentActivity == notifiableActivity){
+            this.currentActivity = null;
+        }
+    }
+
     public synchronized void notifyCurrentActivity(PaxosHandler.Actions action) {
         if (currentActivity != null)
             currentActivity.notifyActivityFromBgThread(action);

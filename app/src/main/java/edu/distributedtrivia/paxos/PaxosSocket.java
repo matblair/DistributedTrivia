@@ -52,6 +52,7 @@ public class PaxosSocket {
 
     public void sendMessage(PaxosMessage message){
         // Create the datagram packet
+        System.out.println("Sending message: " + message.toJson());
         byte[] buffer = message.toJson().getBytes();
         DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, PORT);
         // Try to send it

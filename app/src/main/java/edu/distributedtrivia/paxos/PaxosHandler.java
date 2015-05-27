@@ -1,5 +1,7 @@
 package edu.distributedtrivia.paxos;
 
+import android.text.style.UpdateAppearance;
+
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -15,8 +17,9 @@ public class PaxosHandler {
 
     // Methods for actions
     public enum Actions{
-        REFRESH, START_GAME, NEXT_SCREEN, ANSWERED, BUZZED
+        REFRESH, START_GAME, NEXT_SCREEN, ANSWERED, BUZZED, FIRST, QUESTION, PROPOSAL
     }
+
     // SINGLETON FOR THE WIN!! I Hate myself.
     private static PaxosHandler globalHandler;
 
@@ -85,7 +88,6 @@ public class PaxosHandler {
         // If the type is a non paxos request then handle it normally
         if((type== PaxosMessage.MessageType.TIME) || (type== PaxosMessage.MessageType.START)
                 || (type== PaxosMessage.MessageType.NEW_PLAYER) ){
-            System.out.println("Updating views");
             handleNormal(type, message);
         } else {
             handlePaxos(type, message);
@@ -143,12 +145,22 @@ public class PaxosHandler {
     }
 
     // These methods act as proposal methods in the paxos system
+
+
     public PaxosMessage proposeWinnerMsg(String winner_id){
         // Build round number
         PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.WINNER,
                 (long)0, winner_id, senderID);
         return message;
     }
+
+    public PaxosMessage proposeScoreMsg(String player_id, int score){
+        // Build round number
+        PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.WINNER,
+                score, player_id, senderID);
+        return message;
+    }
+
 
     public PaxosMessage proposeQuestionMsg(int question_id){
         // Build round number
@@ -166,6 +178,7 @@ public class PaxosHandler {
                 }
                 break;
             case TIME:
+                System.out.println("Reciving and handling!");
                 if(gameState != null){
                     gameState.addPlayerResponse(message.getPlayerID(), message.getValue());
                     updateApplication(Actions.BUZZED);
@@ -201,7 +214,6 @@ public class PaxosHandler {
         // Private method to handle paxos
     private void handlePaxos(PaxosMessage.MessageType type, PaxosMessage message) {
         // If we are in a proposal state
-        System.out.println("I was called in handle Paxos ID is: " + senderID + " in state " + currentState);
         switch (type) {
             case ROUND_START:
                 handleProposal(message);
@@ -301,7 +313,6 @@ public class PaxosHandler {
         if (pending != null){
             // I should action this action!
             System.out.println("I Should action this now! " + pending.toJson());
-
             updateApplication(Actions.REFRESH);
             // Now clear it
             pending = null;
@@ -331,6 +342,7 @@ public class PaxosHandler {
     // Methods to create and send accept messages
     private void sendPromise(int round_number){
          // Build the message
+        updateApplication(Actions.PROPOSAL);
         PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.PROMISE,
                 (long)0, null, senderID);
         // Send the message

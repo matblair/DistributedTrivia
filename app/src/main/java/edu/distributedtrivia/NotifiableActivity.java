@@ -32,7 +32,7 @@ public abstract class NotifiableActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         NotifiableApplication app = (NotifiableApplication)getApplication();
-        app.setNotifiable(null);
+        app.removeNotifiable(this);
         super.onStop();
     }
 

@@ -36,28 +36,15 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="GO SLOW"
-        android:id="@+id/goSlow"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/questionText"
-        android:layout_alignEnd="@+id/questionText"
-        android:height="50dp"
-        android:textSize="24dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="GO"
         android:id="@+id/go"
         android:height="100dp"
         android:textSize="24dp"
-        android:layout_above="@+id/goSlow"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -110,14 +97,5 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/answerB"
         android:layout_alignEnd="@+id/answerB" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/timeRemaining"
-        android:layout_alignTop="@+id/roundNumber"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
