@@ -24,6 +24,7 @@ public class GameState {
     private QuestionBank qB;
     private Question currentQuestion;
     private boolean paxos;
+    private boolean started;
 
     // Score keeping functionality
     private HashMap<String,Long> responseTime;
@@ -33,6 +34,7 @@ public class GameState {
 
     public GameState(Context context) {
         roundNum = 1;
+        started = false;
         players = new ArrayList();
         qB = new QuestionBank(context);
     }
@@ -62,7 +64,13 @@ public class GameState {
         this.paxos = paxos;
     }
 
+    public boolean hasStarted() { return started; }
+
     public void nextRound(int questionID) {
+        if(!started){
+            started = true;
+        }
+
         try {
             currentQuestion = qB.nextQuestion(questionID);
         } catch(UnknownQuestion e){
@@ -93,6 +101,15 @@ public class GameState {
             newPos.setPosition(i+1);
             players.set(i, newPos);
         }
+    }
+
+    public Player getPlayer(String playerName){
+        for(Player p: players){
+            if(p.getName()==playerName){
+                return p;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Player> getPlayers() {

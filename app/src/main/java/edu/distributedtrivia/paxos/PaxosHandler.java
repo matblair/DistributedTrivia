@@ -8,6 +8,7 @@ import java.util.Stack;
 import edu.distributedtrivia.GameState;
 import edu.distributedtrivia.Globals;
 import edu.distributedtrivia.NotifiableApplication;
+import edu.distributedtrivia.Player;
 
 
 /**
@@ -29,7 +30,7 @@ public class PaxosHandler {
 
     // To keep track of what state the system is in at any given point
     private enum State {
-        ACCEPTOR, PROPOSER, UNDECIDED
+        ACCEPTOR, PROPOSER, UNDECIDED, ACCEPTED
     }
 
     // Our actual state
@@ -154,10 +155,11 @@ public class PaxosHandler {
         return message;
     }
 
-    public PaxosMessage proposeScoreMsg(String player_id, int score){
+    public PaxosMessage proposeScoreMsg(String player_id, boolean score){
         // Build round number
-        PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.WINNER,
-                score, player_id, senderID);
+        int result = (score ? 1 : 0);
+        PaxosMessage message = new PaxosMessage(round_number, PaxosMessage.MessageType.SCORE,
+                result, player_id, senderID);
         return message;
     }
 
@@ -185,9 +187,11 @@ public class PaxosHandler {
                 }
                 break;
             case NEW_PLAYER:
-                // Add player
-                Globals.addUserName(message.getPlayerID());
-                updateApplication(Actions.REFRESH);
+                // Add player if the game hasn't started
+                if (!Globals.gs.hasStarted()) {
+                    Globals.addUserName(message.getPlayerID());
+                    updateApplication(Actions.REFRESH);
+                }
                 break;
             default:
                 break;
@@ -230,7 +234,7 @@ public class PaxosHandler {
                 } // Ignore otherwise
                 break;
             case ACTION:
-                if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTOR)) {
+                if ((message.getRoundNumber() == round_number) && (currentState == State.ACCEPTED)) {
                     // Action the existing thing
                     actionConsensus();
                 }
@@ -306,14 +310,38 @@ public class PaxosHandler {
                 PaxosMessage.MessageType.ACTION, (long)0, null, senderID);
         // Send that message
         socket.sendBackgroundMessage(message);
+        // Become accepted
+        currentState = State.ACCEPTED;
     }
 
     public void actionConsensus(){
         // Find the existing action
         if (pending != null){
-            // I should action this action!
             System.out.println("I Should action this now! " + pending.toJson());
-            updateApplication(Actions.REFRESH);
+            // I should action this action!
+            PaxosMessage.MessageType type = pending.getMessageType();
+            switch(type){
+                case SCORE:
+                    // Update the score for the given player
+                    Player player = Globals.gs.getPlayer(pending.getPlayerID());
+                    Boolean result = (pending.getValue()==1);
+                    Globals.gs.updatePlayer(player, result);
+                    break;
+                case WINNER:
+                    // Check if we are the winner
+                    if(pending.getPlayerID() == Globals.userPlayer.getName()){
+                        // Then we won! Get the view to process result
+                       updateApplication(Actions.FIRST);
+                    } else {
+                        // Someone else won
+                        updateApplication(Actions.ANSWERED);
+                    }
+                    break;
+                default:
+                    updateApplication(Actions.REFRESH);
+                break;
+            }
+
             // Now clear it
             pending = null;
             currentState = State.UNDECIDED;

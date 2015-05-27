@@ -159,7 +159,7 @@ public class QuestionActivity extends NotifiableActivity {
                         countdownTimer -= 1;
                         break;
                     }
-                    generalisedAnswer(chosenAnswer);
+                    verifyWinner();
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -178,25 +178,26 @@ public class QuestionActivity extends NotifiableActivity {
                     @Override
                     public void run() {
                         Toast.makeText(QuestionActivity.this, "To Slow!! Waiting For Results", Toast.LENGTH_LONG).show();
-                        nextScreen();
+//                        nextScreen();
                     }});
                 noProposal = false;
+                break;
             case FIRST:
                 // The case when someone you won!
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(QuestionActivity.this, "Yay you won this round!!", Toast.LENGTH_LONG).show();
-                        nextScreen();
+//                        nextScreen();
                     }});
-
+                break;
             case ANSWERED:
                 // The case when someone else won, not you
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(QuestionActivity.this, "Sorry, someone else won that question!", Toast.LENGTH_LONG).show();
-                        nextScreen();
+//                        nextScreen();
                     }});
 
                 break;
@@ -217,7 +218,7 @@ public class QuestionActivity extends NotifiableActivity {
         startActivity(i);
     }
 
-    public void verifyWinner(Answer answer) {
+    public void verifyWinner() {
         // Pick the fastest person
         String fastest = Globals.gs.getFastestPlayer();
 
@@ -239,7 +240,7 @@ public class QuestionActivity extends NotifiableActivity {
 
         // Get the score
         PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
-        PaxosMessage message = handler.proposeScoreMsg(Globals.userPlayer.getName(), Globals.userPlayer.getScore());
+        PaxosMessage message = handler.proposeScoreMsg(Globals.userPlayer.getName(), result);
         handler.proposeNewRound(message);
     }
 
