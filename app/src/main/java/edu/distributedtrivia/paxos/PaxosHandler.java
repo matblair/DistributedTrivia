@@ -305,6 +305,7 @@ public class PaxosHandler {
     public void actionConsensus(){
         // Find the existing action
         if (pending != null){
+
             System.out.println("I Should action this now! " + pending.toJson());
             // I should action this action!
             PaxosMessage.MessageType type = pending.getMessageType();
@@ -318,6 +319,7 @@ public class PaxosHandler {
                         // Update the score for the given player
                         Player player = Globals.gs.getPlayer(pending.getPlayerID());
                         Boolean result = (pending.getValue()==1);
+                        player.updateScore(result);
                         Globals.gs.updatePlayer(player, result);
                     }
                     updateApplication(Actions.NEXT_SCREEN);
@@ -337,6 +339,13 @@ public class PaxosHandler {
                         updateApplication(Actions.ANSWERED);
                     }
                     break;
+                case QUESTION:
+                    // Get the id
+                    int questionID = (int) pending.getValue();
+                    // Advance the game
+                    Globals.gs.nextRound(questionID);
+                    // Notify
+                    updateApplication(Actions.NEXT_SCREEN);
                 default:
                     updateApplication(Actions.REFRESH);
                 break;
@@ -385,7 +394,7 @@ public class PaxosHandler {
             if(globalHandler.gameState != null) {
                 globalHandler.gameState = null;
             }
-            globalHandler.round_number = 0;
+            globalHandler = null;
         }
     }
 

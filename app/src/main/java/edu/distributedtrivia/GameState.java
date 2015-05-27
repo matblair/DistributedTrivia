@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import edu.distributedtrivia.QuestionBank;
 
@@ -66,16 +67,20 @@ public class GameState {
 
     public boolean hasStarted() { return started; }
 
+    public int nextQuestion(){
+        return qB.randomQuestionID();
+    }
+
     public void nextRound(int questionID) {
         if(!started){
             started = true;
         }
-
         try {
             currentQuestion = qB.nextQuestion(questionID);
         } catch(UnknownQuestion e){
             System.out.println("We done fucked up even more!");
         }
+        this.responseTime.clear();
         roundNum++;
     }
 
@@ -138,16 +143,19 @@ public class GameState {
 
     // Method to add response time
     public void addPlayerResponse(String player_id, long value){
+        System.out.println("I am a fucking god");
         this.responseTime.put(player_id, value);
     }
 
     // Find the fastest
     public String getFastestPlayer(){
             long min = Long.MAX_VALUE;
+            System.out.println("Doing stuff, respones has " + responseTime.size());
             String fastest = null;
             Iterator iterator = responseTime.entrySet().iterator();
             while(iterator.hasNext()) {
                 Map.Entry entry = (Map.Entry) iterator.next();
+                System.out.println("Key is " + entry.getKey() + " value is " + entry.getValue());
                 String key = (String) entry.getKey();
                 Long value = (Long) entry.getValue();
                 if(value<min){

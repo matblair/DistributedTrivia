@@ -49,19 +49,20 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        PaxosHandler.reset();
+//
+////        if(Globals.userNames != null) {
+////            Globals.userNames.clear();
+////        }
+////        if(Globals.gs != null) {
+////            Globals.gs = null;
+////        }
+//    }
 
-        PaxosHandler.reset();
-
-        if(Globals.userNames != null) {
-            Globals.userNames.clear();
-        }
-        if(Globals.gs != null) {
-            Globals.gs = null;
-        }
-    }
 }
 
 

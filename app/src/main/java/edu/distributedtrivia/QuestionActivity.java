@@ -136,11 +136,11 @@ public class QuestionActivity extends NotifiableActivity {
 
     public void notifyBuzz(){
         buzzTime = System.nanoTime() - startTime;
-        Toast.makeText(QuestionActivity.this, Long.toString(buzzTime), Toast.LENGTH_LONG).show();
-
         // Get the paxos handler and get ready to send
         PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
         handler.sendTime(Globals.userPlayer.getName(), buzzTime);
+        // Add our own value
+        Globals.gs.addPlayerResponse(Globals.userPlayer.getName(), buzzTime);
     }
 
     public void startCountdownTimer(){
@@ -173,7 +173,7 @@ public class QuestionActivity extends NotifiableActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(QuestionActivity.this, "To Slow!! Waiting For Results", Toast.LENGTH_LONG).show();
+                        Toast.makeText(QuestionActivity.this, "To Slow!! Waiting For Results", Toast.LENGTH_SHORT).show();
                     }});
                 noProposal = false;
                 break;
@@ -182,7 +182,7 @@ public class QuestionActivity extends NotifiableActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(QuestionActivity.this, "Yay you won this round!!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(QuestionActivity.this, "Yay you won this round!!", Toast.LENGTH_SHORT).show();
                         generalisedAnswer(chosenAnswer);
                     }});
                 break;
@@ -191,7 +191,7 @@ public class QuestionActivity extends NotifiableActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(QuestionActivity.this, "Sorry, someone else won that question! Waiting for next question", Toast.LENGTH_LONG).show();
+                        Toast.makeText(QuestionActivity.this, "Sorry, someone else won that question! Waiting for next question", Toast.LENGTH_SHORT).show();
 //                        nextScreen();
                     }});
                 break;
@@ -200,7 +200,7 @@ public class QuestionActivity extends NotifiableActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(QuestionActivity.this, "Working out scores!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(QuestionActivity.this, "Working out scores!", Toast.LENGTH_SHORT).show();
                         nextScreen();
                     }});
                 break;
@@ -209,7 +209,7 @@ public class QuestionActivity extends NotifiableActivity {
                     @Override
                     public void run() {
                         System.out.println("Yo I got here!");
-                        Toast.makeText(QuestionActivity.this, "Someone else buzzed in!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(QuestionActivity.this, "Someone else buzzed in!", Toast.LENGTH_SHORT).show();
                     }});
                 break;
         }
@@ -228,7 +228,7 @@ public class QuestionActivity extends NotifiableActivity {
 
         // Get the handler
         PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
-        PaxosMessage message = handler.proposeWinnerMsg("Mat");
+        PaxosMessage message = handler.proposeWinnerMsg(fastest);
 
         // Propose new round
         handler.proposeNewRound(message);

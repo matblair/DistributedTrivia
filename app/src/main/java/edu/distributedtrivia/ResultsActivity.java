@@ -11,8 +11,11 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import edu.distributedtrivia.paxos.PaxosHandler;
+import edu.distributedtrivia.paxos.PaxosMessage;
 
-public class ResultsActivity extends ActionBarActivity {
+
+public class ResultsActivity extends NotifiableActivity {
 
     boolean gameFinished;
 
@@ -49,13 +52,11 @@ public class ResultsActivity extends ActionBarActivity {
                     i.setClass(ResultsActivity.this, MainActivity.class);
                     startActivity(i);
                 }else {
-                    Globals.gs.nextRound(9);
-
-                    //TODO Distribute new round state with everyone else
-
-                    Intent i = new Intent();
-                    i.setClass(ResultsActivity.this, QuestionActivity.class);
-                    startActivity(i);
+                    // Get the paxos handler and get ready to send
+                    PaxosHandler handler = PaxosHandler.getHandler(Globals.userPlayer.getName());
+                    int qID = Globals.gs.nextQuestion();
+                    PaxosMessage message = handler.proposeQuestionMsg(qID);
+                    handler.proposeNewRound(message);
                 }
             }
         });
@@ -66,8 +67,43 @@ public class ResultsActivity extends ActionBarActivity {
                 android.R.layout.simple_list_item_1,
                 Globals.gs.getPlayers()
         );
-        resultsList.setAdapter(adapter);
 
+        resultsList.setAdapter(adapter);
+    }
+
+//    public void startCountdownTimer(){
+//        Thread t = new Thread(new Runnable(){
+//            @Override
+//            public void run() {
+//                try {
+//                    countdownTimer = INITIAL_COUNTDOWN;
+//                    while(noProposal && (countdownTimer>0)){
+//                        // Set the value on the text field!
+//                        Thread.sleep(100);
+//                        countdownTimer -= 1;
+//                        break;
+//                    }
+//                    verifyWinner();
+//                } catch (Exception e){
+//                    e.printStackTrace();
+//                }
+//            }});
+//        t.start();
+//    }
+
+    public void nextScreen() {
+        Intent i = new Intent();
+        i.setClass(ResultsActivity.this, QuestionActivity.class);
+        startActivity(i);
+    }
+
+
+    // Method to update
+    public void notifyActivity(PaxosHandler.Actions action){
+        switch(action){
+            case NEXT_SCREEN:
+                nextScreen();
+        }
     }
 
     @Override
